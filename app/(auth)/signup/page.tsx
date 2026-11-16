@@ -1,0 +1,222 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { AuthCard } from '@/components/auth/auth-card'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { signUp } from '@/lib/api/auth'
+import type { ApiError } from '@/lib/types/auth'
+
+const schema = z.object({
+  name: z.string().min(2, 'Enter your full name'),
+  email: z.string().email('Enter a valid email address'),
+  phone: z
+    .string()
+    .regex(
+      /^(\+?234|0)[789][01]\d{8}$/,
+      'Enter a valid Nigerian phone number',
+    ),
+})
+
+type FormValues = z.infer<typeof schema>
+
+const inputStyle = {
+  fontFamily: 'var(--font-jakarta)',
+  height: '48px',
+  fontSize: '0.95rem',
+}
+
+const labelStyle = {
+  fontFamily: 'var(--font-jakarta)',
+  fontSize: '0.85rem',
+  fontWeight: 600 as const,
+  color: '#333',
+}
+
+export default function SignupPage() {
+  const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null)
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: '', email: '', phone: '' },
+  })
+
+  async function onSubmit(values: FormValues) {
+    setServerError(null)
+    try {
+      const { sessionId } = await signUp(values)
+      sessionStorage.setItem(
+        'ojuowo_signup',
+        JSON.stringify({ sessionId, phone: values.phone, name: values.name }),
+      )
+      router.push('/signup/verify')
+    } catch (err) {
+      const e = err as ApiError
+      if (e.code === 'PHONE_TAKEN') {
+        form.setError('phone', {
+          message: 'An account with this number exists. Log in instead.',
+        })
+      } else if (e.code === 'EMAIL_TAKEN') {
+        form.setError('email', { message: 'This email is already in use.' })
+      } else {
+        setServerError(e.message ?? 'Something went wrong. Try again.')
+      }
+    }
+  }
+
+  const isSubmitting = form.formState.isSubmitting
+
+  return (
+    <AuthCard step={1}>
+      <div style={{ marginBottom: '28px' }}>
+        <h1
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.4rem, 4vw, 1.65rem)',
+            fontWeight: 700,
+            color: '#0D0D0D',
+            lineHeight: 1.2,
+            letterSpacing: '-0.02em',
+            marginBottom: '8px',
+          }}
+        >
+          Create your account
+        </h1>
+        <p
+          style={{
+            fontFamily: 'var(--font-jakarta)',
+            fontSize: '0.9rem',
+            color: '#777',
+            lineHeight: 1.55,
+          }}
+        >
+          Start managing your business on Ojuowo.
+        </p>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel style={labelStyle}>Full name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Amaka Johnson"
+                    disabled={isSubmitting}
+                    style={inputStyle}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel style={labelStyle}>Email address</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="amaka@example.com"
+                    disabled={isSubmitting}
+                    style={inputStyle}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel style={labelStyle}>Phone number</FormLabel>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="08012345678"
+                    disabled={isSubmitting}
+                    style={inputStyle}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {serverError && (
+            <Alert variant="destructive">
+              <AlertDescription
+                style={{ fontFamily: 'var(--font-jakarta)', fontSize: '0.88rem' }}
+              >
+                {serverError}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full rounded-full"
+            style={{
+              height: '50px',
+              fontFamily: 'var(--font-jakarta)',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              marginTop: '4px',
+            }}
+          >
+            {isSubmitting ? 'Continuing...' : 'Continue'}
+          </Button>
+        </form>
+      </Form>
+
+      <p
+        style={{
+          textAlign: 'center',
+          marginTop: '24px',
+          fontFamily: 'var(--font-jakarta)',
+          fontSize: '0.85rem',
+          color: '#777',
+        }}
+      >
+        Already have an account?{' '}
+        <a
+          href="/login"
+          style={{
+            color: '#5B4CF5',
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          Log in
+        </a>
+      </p>
+    </AuthCard>
+  )
+}
