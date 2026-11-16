@@ -92,7 +92,7 @@ export default function SignupPage() {
 
   return (
     <AuthCard step={1}>
-      <div style={{ marginBottom: '28px' }}>
+      <div style={{ marginBottom: '28px', textAlign: 'center' }}>
         <h1
           style={{
             fontFamily: 'var(--font-display)',
@@ -104,7 +104,7 @@ export default function SignupPage() {
             marginBottom: '8px',
           }}
         >
-          Create your account
+          Create Your Account
         </h1>
         <p
           style={{
@@ -127,7 +127,7 @@ export default function SignupPage() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel style={labelStyle}>Full name</FormLabel>
+                  <FormLabel style={labelStyle}>Full Name</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Amaka Johnson"
@@ -146,7 +146,7 @@ export default function SignupPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel style={labelStyle}>Email address</FormLabel>
+                  <FormLabel style={labelStyle}>Email Address</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -166,7 +166,7 @@ export default function SignupPage() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel style={labelStyle}>Phone number</FormLabel>
+                  <FormLabel style={labelStyle}>Phone Number</FormLabel>
                   <FormControl>
                     <Input
                       type="tel"
