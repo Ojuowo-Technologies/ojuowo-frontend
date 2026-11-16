@@ -11,6 +11,13 @@ export async function request<T>(
   path: string,
   options?: RequestInit & { skipAuth?: boolean; authToken?: string },
 ): Promise<T> {
+  if (!BASE_URL) {
+    throw {
+      code: 'API_NOT_CONFIGURED',
+      message: 'The backend API is not connected yet. Set NEXT_PUBLIC_API_URL in .env.local.',
+    } satisfies ApiError
+  }
+
   const token = options?.authToken ?? (options?.skipAuth ? null : getToken())
 
   const res = await fetch(`${BASE_URL}${path}`, {
