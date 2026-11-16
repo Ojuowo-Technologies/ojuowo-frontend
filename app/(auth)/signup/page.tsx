@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -32,15 +32,18 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
-const inputStyle = {
+const inputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-jakarta)',
   fontSize: '0.95rem',
+  height: '48px',
+  paddingLeft: '16px',
+  paddingRight: '16px',
 }
 
-const labelStyle = {
+const labelStyle: React.CSSProperties = {
   fontFamily: 'var(--font-jakarta)',
   fontSize: '0.85rem',
-  fontWeight: 600 as const,
+  fontWeight: 600,
   color: '#333',
 }
 
@@ -116,100 +119,102 @@ export default function SignupPage() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel style={labelStyle}>Full name</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Amaka Johnson"
-                    disabled={isSubmitting}
-                    className="h-12 px-4"
-                    style={inputStyle}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {/* Fields — tighter spacing between them */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel style={labelStyle}>Full name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Amaka Johnson"
+                      disabled={isSubmitting}
+                      style={inputStyle}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel style={labelStyle}>Email address</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="amaka@example.com"
-                    disabled={isSubmitting}
-                    className="h-12 px-4"
-                    style={inputStyle}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel style={labelStyle}>Email address</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="amaka@example.com"
+                      disabled={isSubmitting}
+                      style={inputStyle}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel style={labelStyle}>Phone number</FormLabel>
-                <FormControl>
-                  <Input
-                    type="tel"
-                    placeholder="08012345678"
-                    disabled={isSubmitting}
-                    className="h-12 px-4"
-                    style={inputStyle}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel style={labelStyle}>Phone number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      placeholder="08012345678"
+                      disabled={isSubmitting}
+                      style={inputStyle}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          {serverError && (
-            <div
-              role="alert"
+          {/* Error + button — more breathing room below the fields */}
+          <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {serverError && (
+              <div
+                role="alert"
+                style={{
+                  background: '#FFF1F2',
+                  borderRadius: '10px',
+                  padding: '12px 16px',
+                  fontFamily: 'var(--font-jakarta)',
+                  fontSize: '0.88rem',
+                  color: '#C0152A',
+                  lineHeight: 1.5,
+                }}
+              >
+                {serverError}
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={!hasAllValues || isSubmitting}
+              className="w-full rounded-full"
               style={{
-                background: '#FFF1F2',
-                borderRadius: '10px',
-                padding: '12px 16px',
+                height: '50px',
                 fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.88rem',
-                color: '#C0152A',
-                lineHeight: 1.5,
+                fontWeight: 700,
+                fontSize: '0.95rem',
               }}
             >
-              {serverError}
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            disabled={!hasAllValues || isSubmitting}
-            className="w-full rounded-full"
-            style={{
-              height: '50px',
-              fontFamily: 'var(--font-jakarta)',
-              fontWeight: 700,
-              fontSize: '0.95rem',
-              marginTop: '4px',
-            }}
-          >
-            {isSubmitting ? 'Continuing...' : 'Continue'}
-          </Button>
+              {isSubmitting ? 'Continuing...' : 'Continue'}
+            </Button>
+          </div>
         </form>
       </Form>
 
