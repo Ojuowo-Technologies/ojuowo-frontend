@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: 'How much does it cost?',
-    a: 'Free to start. As we grow, we will introduce plans, but you will always get advance notice before anything changes and no feature will disappear without warning. No surprises.',
+    a: 'We will announce our pricing before we charge anything, and you will always get advance notice. No surprises.',
   },
   {
     q: 'How is Ojúòwò different from just using WhatsApp and spreadsheets?',
@@ -35,7 +35,7 @@ const faqs = [
   },
   {
     q: 'What if I need help setting it up?',
-    a: 'The app walks you through setup step by step when you first sign in. If you get stuck, our support team is reachable directly. You will not be left to figure it out on your own.',
+    a: 'We walk you through it when you join. You will not be left to figure it out on your own.',
   },
 ]
 

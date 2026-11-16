@@ -366,9 +366,9 @@ export function Hero() {
             marginBottom: '24px',
           }}
         >
-          Your Business Deserves<br />
+          Run Your Business<br />
           <span className="inline-block sm:whitespace-nowrap">
-            Better Than a{' '}
+            Without The{' '}
             <span style={{ position: 'relative', display: 'inline-block', color: '#5B4CF5' }}>
               Notebook
               <svg
