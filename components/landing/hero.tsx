@@ -352,7 +352,7 @@ export function Hero() {
           }}
         >
           <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#5B4CF5', flexShrink: 0 }} />
-          Now open for early access
+          The operating system for your business
         </Badge>
 
         <h1
@@ -366,9 +366,9 @@ export function Hero() {
             marginBottom: '24px',
           }}
         >
-          Run Your Business<br />
+          Your Business Deserves<br />
           <span className="inline-block sm:whitespace-nowrap">
-            Without The{' '}
+            Better Than a{' '}
             <span style={{ position: 'relative', display: 'inline-block', color: '#5B4CF5' }}>
               Notebook
               <svg
@@ -408,9 +408,9 @@ export function Hero() {
           Customers track progress on their own, so your phone stops ringing.
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
           <a
-            href="#waitlist"
+            href="/signup"
             className={cn(buttonVariants({ variant: 'default' }), 'cta-btn rounded-full h-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B4CF5] focus-visible:ring-offset-2')}
             style={{
               fontFamily: 'var(--font-jakarta)',
@@ -421,7 +421,7 @@ export function Hero() {
               textDecoration: 'none',
             }}
           >
-            Join The Waitlist
+            Get started for free
           </a>
         </div>
       </motion.div>

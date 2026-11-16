@@ -5,7 +5,7 @@ import { HowItWorks } from '@/components/landing/how-it-works'
 import { ForYourBusiness } from '@/components/landing/for-your-business'
 import { Features } from '@/components/landing/features'
 import { FAQ } from '@/components/landing/faq'
-import { WaitlistForm } from '@/components/landing/waitlist-form'
+import { SignupCTA } from '@/components/landing/waitlist-form'
 import { Footer } from '@/components/landing/footer'
 
 const jsonLd = {
@@ -16,7 +16,7 @@ const jsonLd = {
       name: 'Ojúòwò',
       url: process.env.NEXT_PUBLIC_APP_URL ?? 'https://ojuowo.com',
       description:
-        'Business management software for Nigerian small businesses — tailors, hair stylists, bakers, shoe makers and more.',
+        'Business management software for Nigerian small businesses: tailors, hair stylists, bakers, shoe makers and more.',
     },
     {
       '@type': 'SoftwareApplication',
@@ -27,10 +27,10 @@ const jsonLd = {
         '@type': 'Offer',
         price: '0',
         priceCurrency: 'NGN',
-        description: 'Free during early access',
+        description: 'Free to start',
       },
       description:
-        'Manage orders, let customers track their jobs by link, assign staff tasks and calculate worker pay — built for Nigerian small businesses.',
+        'Manage orders, let customers track their jobs by link, assign staff tasks and calculate worker pay. Built for Nigerian small businesses.',
     },
     {
       '@type': 'FAQPage',
@@ -64,7 +64,7 @@ const jsonLd = {
           name: 'How much does it cost?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Free for everyone on the waitlist during early access. We will announce our pricing before we charge anything, and you will always get advance notice. No surprises.',
+            text: 'Free to start. As we grow, we will introduce plans, but you will always get advance notice before anything changes. No surprises.',
           },
         },
         {
@@ -94,7 +94,7 @@ export default function Home() {
       <ForYourBusiness />
       <Features />
       <FAQ />
-      <WaitlistForm />
+      <SignupCTA />
       <Footer />
     </main>
   )

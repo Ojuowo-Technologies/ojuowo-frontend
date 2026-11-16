@@ -283,7 +283,7 @@ export function PainPoints() {
         {/* Right — CTA */}
         <StaggerItem>
         <a
-          href="#waitlist"
+          href="/signup"
           className={cn(buttonVariants({ variant: 'default' }), 'cta-btn rounded-full h-auto pain-solution-cta')}
           style={{
             fontFamily: 'var(--font-jakarta)', fontWeight: 700,
@@ -293,7 +293,7 @@ export function PainPoints() {
             letterSpacing: '-0.01em',
           }}
         >
-          Join The Waitlist
+          Get started for free
         </a>
         </StaggerItem>
       </div>

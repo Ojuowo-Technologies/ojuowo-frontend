@@ -12,7 +12,6 @@ const links: NavLink[] = [
   { label: 'How it works', href: '#how-it-works' },
   { label: "Who it's for", href: '#who-its-for' },
   { label: 'FAQs',    href: '#faq' },
-  { label: 'Join the waitlist', href: '#waitlist', cta: true },
 ]
 
 function HamburgerIcon() {
@@ -128,24 +127,43 @@ export function Nav() {
             ))}
           </nav>
 
-          {/* Desktop CTA */}
-          <a
-            href="#waitlist"
-            className={cn(
-              buttonVariants({ variant: 'default' }),
-              'nav-cta-desktop cta-btn rounded-full h-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B4CF5] focus-visible:ring-offset-2',
-            )}
-            style={{
-              fontFamily: 'var(--font-jakarta)',
-              fontWeight: 600,
-              fontSize: '0.9rem',
-              padding: '12px 26px',
-              letterSpacing: '-0.01em',
-              textDecoration: 'none',
-            }}
-          >
-            Join the waitlist
-          </a>
+          {/* Desktop CTAs */}
+          <div className="nav-cta-desktop" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <a
+              href="/login"
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'rounded-full h-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B4CF5] focus-visible:ring-offset-2',
+              )}
+              style={{
+                fontFamily: 'var(--font-jakarta)',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                padding: '12px 24px',
+                letterSpacing: '-0.01em',
+                textDecoration: 'none',
+              }}
+            >
+              Log in
+            </a>
+            <a
+              href="/signup"
+              className={cn(
+                buttonVariants({ variant: 'default' }),
+                'cta-btn rounded-full h-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B4CF5] focus-visible:ring-offset-2',
+              )}
+              style={{
+                fontFamily: 'var(--font-jakarta)',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                padding: '12px 26px',
+                letterSpacing: '-0.01em',
+                textDecoration: 'none',
+              }}
+            >
+              Get started for free
+            </a>
+          </div>
 
           {/* Mobile hamburger */}
           <button
@@ -238,27 +256,7 @@ export function Nav() {
 
         {/* Mobile nav links */}
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1, alignItems: 'center' }}>
-          {links.map((link) => link.cta ? (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={closeMenu}
-              className={cn(buttonVariants({ variant: 'default' }), 'cta-btn rounded-full h-auto')}
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontWeight: 600,
-                fontSize: '1rem',
-                padding: '14px 20px',
-                letterSpacing: '-0.01em',
-                textDecoration: 'none',
-                textAlign: 'center',
-                justifyContent: 'center',
-                marginTop: '12px',
-              }}
-            >
-              {link.label}
-            </a>
-          ) : (
+          {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -289,6 +287,44 @@ export function Nav() {
               {link.label}
             </a>
           ))}
+          <a
+            href="/login"
+            onClick={closeMenu}
+            className={cn(buttonVariants({ variant: 'outline' }), 'rounded-full h-auto')}
+            style={{
+              fontFamily: 'var(--font-jakarta)',
+              fontWeight: 600,
+              fontSize: '1rem',
+              padding: '14px 20px',
+              letterSpacing: '-0.01em',
+              textDecoration: 'none',
+              textAlign: 'center',
+              justifyContent: 'center',
+              marginTop: '12px',
+              width: '100%',
+            }}
+          >
+            Log in
+          </a>
+          <a
+            href="/signup"
+            onClick={closeMenu}
+            className={cn(buttonVariants({ variant: 'default' }), 'cta-btn rounded-full h-auto')}
+            style={{
+              fontFamily: 'var(--font-jakarta)',
+              fontWeight: 600,
+              fontSize: '1rem',
+              padding: '14px 20px',
+              letterSpacing: '-0.01em',
+              textDecoration: 'none',
+              textAlign: 'center',
+              justifyContent: 'center',
+              marginTop: '4px',
+              width: '100%',
+            }}
+          >
+            Get started for free
+          </a>
         </nav>
       </div>
     </>
