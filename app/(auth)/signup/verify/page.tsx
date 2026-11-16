@@ -10,6 +10,9 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from '@/components/ui/input-otp'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { BackButton } from '@/components/auth/back-button'
 import { verifyOtp, resendOtp } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
@@ -97,7 +100,9 @@ export default function VerifyPage() {
   }
 
   return (
-    <AuthCard step={2}>
+    <>
+      <BackButton href="/signup" label="Back" />
+      <AuthCard step={2}>
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <h1
           style={{
@@ -190,10 +195,14 @@ export default function VerifyPage() {
 
         <a
           href="/signup"
+          className={cn(buttonVariants({ variant: 'outline' }), 'rounded-full')}
           style={{
             fontFamily: 'var(--font-jakarta)',
-            fontSize: '0.85rem',
-            color: '#777',
+            fontWeight: 600,
+            fontSize: '0.88rem',
+            height: '40px',
+            paddingLeft: '20px',
+            paddingRight: '20px',
             textDecoration: 'none',
           }}
         >
@@ -201,5 +210,6 @@ export default function VerifyPage() {
         </a>
       </div>
     </AuthCard>
+    </>
   )
 }

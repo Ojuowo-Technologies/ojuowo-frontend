@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AuthCard } from '@/components/auth/auth-card'
+import { BackButton } from '@/components/auth/back-button'
 import {
   Form,
   FormControl,
@@ -91,7 +92,9 @@ export default function SignupPage() {
     watched.phone.trim().length > 0
 
   return (
-    <AuthCard step={1}>
+    <>
+      <BackButton href="/" label="Back to home" />
+      <AuthCard step={1}>
       <div style={{ marginBottom: '28px', textAlign: 'center' }}>
         <h1
           style={{
@@ -241,5 +244,6 @@ export default function SignupPage() {
         </a>
       </p>
     </AuthCard>
+    </>
   )
 }
