@@ -127,7 +127,8 @@ function FormMessage({ className, children, ...props }: React.ComponentProps<'p'
   return (
     <p
       id={formMessageId}
-      className={cn('text-destructive text-sm font-medium', className)}
+      className={cn('text-sm', className)}
+      style={{ fontFamily: 'var(--font-jakarta)', fontWeight: 500, color: '#C0152A' }}
       {...props}
     >
       {body}

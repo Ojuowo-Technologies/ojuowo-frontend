@@ -192,7 +192,8 @@ export default function SignupPage() {
                   borderRadius: '10px',
                   padding: '12px 16px',
                   fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.88rem',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
                   color: '#C0152A',
                   lineHeight: 1.5,
                 }}
