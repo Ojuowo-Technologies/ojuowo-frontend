@@ -25,8 +25,8 @@ const schema = z.object({
   phone: z
     .string()
     .regex(
-      /^(\+?234|0)[789][01]\d{8}$/,
-      'Enter a valid Nigerian phone number',
+      /^0?[789][01]\d{8}$/,
+      'Enter a valid phone number',
     ),
 })
 
@@ -169,13 +169,42 @@ export default function SignupPage() {
                 <FormItem>
                   <FormLabel style={labelStyle}>Phone Number</FormLabel>
                   <FormControl>
-                    <Input
-                      type="tel"
-                      placeholder="08012345678"
-                      disabled={isSubmitting}
-                      style={inputStyle}
-                      {...field}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <div
+                        aria-hidden="true"
+                        style={{
+                          position: 'absolute',
+                          left: '1px',
+                          top: '1px',
+                          bottom: '1px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          paddingLeft: '14px',
+                          paddingRight: '12px',
+                          background: '#F5F5F8',
+                          borderRight: '1px solid #E5E5EA',
+                          borderRadius: '7px 0 0 7px',
+                          fontFamily: 'var(--font-jakarta)',
+                          fontSize: '0.92rem',
+                          fontWeight: 500,
+                          color: '#555',
+                          userSelect: 'none',
+                          zIndex: 1,
+                          pointerEvents: 'none',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        🇳🇬 <span>+234</span>
+                      </div>
+                      <Input
+                        type="tel"
+                        placeholder="8012345678"
+                        disabled={isSubmitting}
+                        style={{ ...inputStyle, paddingLeft: '100px' }}
+                        {...field}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

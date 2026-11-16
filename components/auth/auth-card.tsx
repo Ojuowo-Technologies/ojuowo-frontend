@@ -44,7 +44,9 @@ export function AuthCard({
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
-        <Logo />
+        <a href="/" aria-label="Go to Ojuowo home" style={{ display: 'inline-flex', textDecoration: 'none' }}>
+          <Logo />
+        </a>
       </div>
       <StepBar step={step} />
       {children}
