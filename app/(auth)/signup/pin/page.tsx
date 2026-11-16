@@ -26,6 +26,9 @@ const labelStyle: React.CSSProperties = {
 
 const pinInputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-jakarta)',
+  height: '48px',
+  paddingLeft: '16px',
+  paddingRight: '16px',
   fontSize: '1.4rem',
   textAlign: 'center',
   letterSpacing: '0.4em',
@@ -119,7 +122,8 @@ export default function PinPage() {
         </p>
       </div>
 
-      <div className="space-y-5">
+      {/* Fields — same 16px gap as signup screen */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
           <label style={labelStyle}>PIN</label>
           <Input
@@ -131,7 +135,6 @@ export default function PinPage() {
             onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="••••••"
             disabled={loading}
-            className="h-12 px-4"
             style={pinInputStyle}
             autoComplete="new-password"
           />
@@ -148,12 +151,14 @@ export default function PinPage() {
             onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="••••••"
             disabled={loading}
-            className="h-12 px-4"
             style={pinInputStyle}
             autoComplete="new-password"
           />
         </div>
+      </div>
 
+      {/* Error + button — same 28px gap as signup screen */}
+      <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {error && (
           <div
             role="alert"
@@ -163,6 +168,7 @@ export default function PinPage() {
               padding: '12px 16px',
               fontFamily: 'var(--font-jakarta)',
               fontSize: '0.88rem',
+              fontWeight: 500,
               color: '#C0152A',
               lineHeight: 1.5,
             }}
@@ -180,7 +186,6 @@ export default function PinPage() {
             fontFamily: 'var(--font-jakarta)',
             fontWeight: 700,
             fontSize: '0.95rem',
-            marginTop: '4px',
           }}
         >
           {loading ? 'Setting up...' : 'Finish setup'}
