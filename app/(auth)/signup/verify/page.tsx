@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/input-otp'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { BackButton } from '@/components/auth/back-button'
 import { verifyOtp, resendOtp } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
@@ -101,6 +102,8 @@ export default function VerifyPage() {
   return (
     <>
       <AuthCard step={2}>
+      <BackButton href="/signup" label="Back" />
+
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <h1
           style={{

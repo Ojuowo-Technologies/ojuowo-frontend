@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AuthCard } from '@/components/auth/auth-card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { BackButton } from '@/components/auth/back-button'
 import { setPin as savePin } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
@@ -96,6 +97,8 @@ export default function PinPage() {
 
   return (
     <AuthCard step={3}>
+      <BackButton href="/signup/verify" label="Back" />
+
       <div style={{ marginBottom: '28px', textAlign: 'center' }}>
         <h1
           style={{
