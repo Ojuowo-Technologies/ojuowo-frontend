@@ -1,0 +1,1532 @@
+# Business OS Platform: PRD for Product Design and Build (Phases 1 to 4)
+
+**Version 4.0** · Original: Nov 9, 2026 · Updated: Nov 16, 2026 · Author: @Ligali Titobiloluwa · Product name: **Ojúòwò**
+
+> **How to read the markers in this document**
+> - **[CONFIRM]** marks a starting value or default that was proposed in review and must be confirmed with the pilot business (S.I.G Clothing Company), a lawyer, or the product owner before it is final.
+> - **Designer decision** marks something intentionally left open for human creative direction.
+> - Numbers marked as "starting values" are targets to test, not facts.
+
+---
+
+## 0. What changed
+
+**Version 4.0 (Nov 16, 2026)** merges the companion document "Ojúòwò: User Flows and Onboarding (Phase 1)" into this PRD. Where the two documents disagreed, the User Flows document is authoritative. The main additions:
+
+| Area | Change |
+| --- | --- |
+| Phase 1 scope | Custom business landing page and staff payouts through Paga are now Phase 1 (both were later phases). |
+| Payment provider | Changed from Paystack to **Paga** for staff payouts and business balances. |
+| New role | **Cashier** added to the role model. |
+| Business balances | Four named balance buckets (Total, Available, Payout, In transit) in Phase 1. |
+| Automatic sweep | Owner can set an automatic payout schedule. |
+| Address changes | A business can change its subdomain up to 3 times; old addresses redirect for 30 days. |
+| Onboarding flows | Detailed step-by-step flows for all Phase 1 paths added (§5.5–§5.11). |
+| Language | English only for Phase 1 (Yoruba and others are designed for but not built). |
+
+---
+
+**Version 3.0 (Nov 11, 2026)** fixed 24 problems found in review. The main changes:
+
+| Area | Change |
+| --- | --- |
+| Data concepts | Order, Item, Task and Stage are now defined once and used the same way everywhere (§3). |
+| Money | Payment provider, settlement, refunds, cancellation, invoice due dates and locking are specified (§5.1, §5.4, §12). |
+| Wages | Ironing no longer goes unpaid; rework, rate changes, reassignment and corrections have rules (§5.3). |
+| Offline | The Phase 1 and Phase 4 offline statements no longer contradict each other (§4, §8). |
+| Front end | New §4.3 sets the offline interface states, supported browsers and the performance budget. |
+| Final decisions (v3.0) | **Pay is per piece** (for example a set amount for each agbada sewn), paid per pay period. Pay periods and cut-offs are business settings, and the owner can run a wage run for any date range. **Payment plan is chosen per order** (full first, part now and balance later, or several part payments). Customers pay the business offline. **Paystack** is the provider. The business wallet funds staff payouts and subscriptions, with a commission on payouts, built in Phase 3 after legal review. Name: Ojúòwò, web address `ojuowo`, footer "Powered by Ojúòwò". All open questions are closed. See §11.2. |
+| WhatsApp | A fallback, consent capture and an SMS rule were added (§10). |
+| Security | Permission matrix, unguessable tracking links and no password sending (§2). |
+| Scope | Basic inventory moved to Phase 2. Phase 2 split into 2A, 2B and 2C. |
+| Metrics | Eight measurable Phase 1 targets and written gates (§16). |
+| New sections | Technical requirements (§12), AI processing pipeline (§13), Prisma data model (§14), Business model (§15), Success metrics (§16), Risks (§17), Assumptions (§18). |
+
+---
+
+## 1. Vision and product summary
+
+### 1.1 Product summary
+
+We are building a multi-tenant platform that lets small made-to-order businesses run their whole operation, from taking an order to payment and collection, without building their own software. Each business configures its own workflow, branding and web address on shared infrastructure. (Product name: **Ojúòwò**, a Yoruba name meaning the face of the business, subject to a domain, trademark and company-name check. Web addresses use plain letters, for example `ojuowo`, because addresses cannot carry accent marks. This document says "the platform".)
+
+**The solution.** One source of truth for orders, staff, customers and money. Staff see only the work assigned to them and update its progress. Customers see their order moving through stages and see what they owe. Payments are recorded by the business. The owner sees everything.
+
+### 1.2 Problem statement
+
+Businesses such as tailors, barbing salons, shoe makers and farms run on notebooks, WhatsApp chats and memory. Orders get lost, staff pay is disputed, customers keep asking "is it ready?", and the owner cannot easily see who has paid and who has not.
+
+**Evidence (to be filled before design sign-off).**
+- [N] interviews with [N] businesses, including S.I.G Clothing Company.
+- [N] hours per week the owner and staff spend chasing orders, payments and wage counts today.
+- [N] orders lost or late in the last 3 months, and [N] wage disputes.
+
+The S.I.G proposal and interview notes are attached in §19.
+
+### 1.3 Goals and non-goals
+
+**Goals**
+1. Let one tailoring business run its full order cycle on the platform, daily (Phase 1).
+2. Make staff pay accurate and disputes rare. Each worker is paid a set amount for each approved piece of work (for example, a set price for each agbada sewn), and every task is recorded.
+3. Let customers see progress and their balance without calling the business.
+4. Turn the tailoring product into a platform for other stage-based businesses (Phase 2).
+5. Connect businesses to their suppliers and pay staff through the platform (Phase 3).
+
+**Non-goals (for the whole product, until stated otherwise)**
+- Not accounting software: no ledger, tax filing or bank reconciliation.
+- Not a marketplace of strangers in Phases 1 to 3. Supplier connections are invite-only.
+- No AI features in Phases 1 to 3 (see §13).
+- No support for businesses that sell by planting or harvest planning (farm planning). Farms are supported only as businesses that sell produce by customer order.
+- No sales tax or discounts on invoices in Phase 1. The manager enters the final price.
+- **Customers do not pay through the platform in Phase 1.** The tracking link shows progress and balance only. The manager records cash and transfer payments.
+- **Subscription billing** starts in Phase 2A. The business wallet (for subscription payments) is a Phase 2A addition; Phase 1 uses Paga only for staff payouts.
+
+### 1.4 The launch wedge
+
+Phase 1 is built for tailoring and clothing businesses, using the S.I.G Clothing Company proposal as the reference customer. The underlying model is generic from day one (an Order with Items that move through configurable stages), so later phases can onboard other **stage-based, made-to-order** businesses (shoe making, laundry, bakery orders, farms selling produce by order) by configuration.
+
+Businesses that run on time slots (barbing salons) need the **Appointments** module in Phase 2. That module is new work and is not promised by configuration alone.
+
+**Technical rule that affects design.** Stages are stored per business, not hard-coded. Order details are stored as field definitions per business type, not as tailoring-only columns. This keeps Phase 2 from requiring a data migration.
+
+### 1.5 Roadmap and gates
+
+Phase 1 is designed first. Each gate is the real-world outcome that shows a phase has worked. The gates are written out in §16.
+
+| Phase | Name | Gate to pass before the next phase |
+| --- | --- | --- |
+| 1 | Tailoring MVP | Gate 1: the eight Phase 1 measures in §16.1 |
+| 2 | Many business types (2A, 2B, 2C) | Gate 2: §16.2 |
+| 3 | Payroll, suppliers, delivery, analytics | Gate 3: §16.3 |
+| 4 | Scale and ecosystem | Directional only |
+
+### 1.6 How to use this document
+
+- Sections 2 to 4 apply to every phase: users, core concepts, and design constraints.
+- Sections 5 to 8 describe each phase: goal, features, flows and screens.
+- Section 9 lists every screen by phase.
+- Section 10 lists messages and pricing touchpoints.
+- Section 11 lists decisions, pre-launch checks and design deliverables.
+- Sections 12 to 15 cover technical requirements, the AI pipeline, the data model and the business model.
+- Section 16 lists success metrics and gates. Sections 17 and 18 list risks and assumptions.
+- Anything marked **Designer decision** is intentionally open.
+
+---
+
+## 2. Users and roles
+
+Every person sees a different product depending on who they are. Design each role as its own experience, not as a hidden-menu version of the manager screen.
+
+### 2.1 Roles and personas
+
+"Admin" is no longer used for business staff. **Platform admin** means our own team. **Manager** means the business's front-desk or operations person.
+
+| Role | Who they are | Main device | Goal | Frustration today | What they see and do |
+| --- | --- | --- | --- | --- | --- |
+| Platform admin | Our own team | Web | Keep businesses running | Not applicable | Manages all businesses, plans, billing and support. Internal tool, lowest design priority. |
+| Business owner | Founder or top admin of one business | Web and phone | Know what is late, owed and paid | Cannot see who has paid. Counts wages by hand. | Sets up the business, creates staff, sees all orders, money and reports, reviews wages. |
+| Manager | Front-desk or operations person | Web and tablet | Take orders without mistakes | Lost orders, repeated "is it ready?" calls | Takes orders, records customers and measurements, creates and assigns tasks, verifies finished work, issues invoices, records payments. |
+| Worker | Tailor, ironer, packer (barber and others later) | Phone (often low-end Android) | Know the next job, get paid correctly | Disputes about what was done and what is owed | Sees only assigned tasks, updates progress, marks work done, sees own earnings. |
+| Cashier | Front-desk or payment person | Web and tablet | Record payments accurately and quickly | Manual receipt writing | Records cash and transfer payments, issues receipts, views orders and invoices. Cannot create orders or assign tasks. |
+| Customer | Person buying from the business | Phone, via WhatsApp link | Know when the order is ready and what is owed | Having to call to ask for status | Tracks progress, receives invoices, sees balance. Pays the business directly, not through the platform. |
+| Supplier | Fabric seller, equipment vendor | Phone and web | Get orders and be paid | Chasing payments | Phase 3. Runs a small shop on the platform, receives orders and sends payment requests for accepted orders. |
+| Subcontractor | External tailor or finisher | Phone | Receive work and update it | Unclear instructions | Phase 2B. Receives outsourced tasks with a limited login. |
+| Delivery partner | Third-party rider or logistics company | Phone | Complete deliveries | Unclear drop-off details | Phase 3. Receives delivery requests and confirms drop-off. |
+
+### 2.2 Permission matrix
+
+Permissions are enforced on the server for every request. Hiding a menu item is not security.
+
+| Data | Owner | Manager | Cashier | Worker | Customer (via link) |
+| --- | --- | --- | --- | --- | --- |
+| All orders | Yes | Yes | View only | No | Own order only |
+| Assigned tasks | Yes | Yes | No | Own tasks only | No |
+| Customer full details (phone, address) | Yes | Yes | No | No | Own only |
+| Customer first name | Yes | Yes | Yes | Yes (on assigned tasks) | Own only |
+| Measurements and fabric photos | Yes | Yes | No | Yes (on assigned tasks) | No |
+| Edit or delete saved measurements | Yes | Yes | No | No | No |
+| Invoices and payments | Yes | Yes | View and record | No | Own invoice and balance |
+| Record cash or transfer payment | Yes | Yes | Yes | No | No |
+| Pay rates and wage run | Yes | No | No | Own earnings only | No |
+| Staff list and roles | Yes | View only | No | No | No |
+| Business settings and branding | Yes | No | No | No | No |
+| Reports | Yes | Yes (orders and balances only) | No | No | No |
+
+### 2.3 Access rules
+
+- The owner creates staff accounts by entering the worker's **phone number**. Staff do not self-register.
+- Staff sign in with a **one-time code** sent by SMS or WhatsApp on first use, then a **PIN** on that device. Nobody is ever sent a password. The owner can revoke any device. A forgotten PIN is reset with a new one-time code.
+- A worker never sees other workers' tasks, a customer's phone number or address, or business finances.
+- A customer never needs a password for basic tracking. A link from WhatsApp is enough. The link contains a **random, unguessable token** (never the order number). The page shows first name, stages, balance and pickup details only. The manager can regenerate the link to cancel an old one.
+- A customer account is optional and only needed to see history across orders (Phase 2B).
+- Roles are customizable per business in Phase 2A (for example, a barbing salon calls workers "stylists").
+
+---
+
+## 3. Core concepts the designer must understand
+
+The platform works for different businesses because every business is described with the same building blocks. Learn these and the rest of the document follows.
+
+| Concept | Plain meaning | Tailoring example | Barbing salon example (Phase 2) |
+| --- | --- | --- | --- |
+| Business (tenant) | One company on the platform, with its own data, branding and address | S.I.G Clothing | A barbing salon |
+| Order | One customer, one invoice, one or more Items | One order containing a suit | One appointment |
+| Item | One garment or product line inside an Order. **The Item moves through the stages.** | The suit top; the suit trousers | The haircut |
+| Stage | A step an Item moves through. Each business defines its own list. | Received, sewing, ironing, packaged, ready, delivered | Booked, in chair, finishing, paid, done |
+| Task | A unit of work for one Item in one Stage, assigned to one person | Sew the top (Tunde); sew the trousers (Ada) | Haircut (Sola) |
+| Skill | What a worker is able to do. Used to suggest who gets a task. Each tailor has one main skill. | Top sewing, trouser sewing, agbada sewing, ironing | Fade cut, beard shaping |
+
+**Two more ideas that shape the screens.**
+
+- **Item details are flexible.** A tailoring Item carries fabric photos, fabric type and measurements. A farm Item carries crop type, quantity and harvest date. Each business type has its own set of fields on an Item, chosen during setup. Design the order form as a configurable form, not a fixed one.
+- **Everything leaves a trail, and the trail cannot be changed.** Every status change, payment and assignment records who did it and when. History is **append-only**: nothing is overwritten or deleted. A correction is a new entry. The order detail screen always shows this history clearly, because it settles disputes about work and pay.
+
+**How an Item moves.**
+
+1. The owner defines the stages once (Phase 1: a fixed tailoring template).
+2. When the order is confirmed, each Item enters its first working stage and the platform creates the tasks for that stage only.
+3. The platform suggests a worker per task (see §13) and the manager accepts or changes it.
+4. Workers update progress. When all tasks for the Item in a stage are **approved**, the Item moves to the next stage and its tasks are created at that moment. This avoids assigning an ironer days before the garment is ready.
+5. The Order is **Ready** when all its Items are Ready.
+6. Customers are notified at stages the business marks as customer-visible.
+
+**What the customer sees.** The tracking page shows the Order at the stage of its **least advanced Item**, with each Item listed below it.
+
+---
+
+## 4. Design principles and constraints
+
+Our users run workshops and shops, not offices. The design has to work in their real conditions: busy hands, cheap phones, patchy internet and little patience for training.
+
+### 4.1 Principles
+
+- **Worker app first for speed.** A tailor should open the app and see their next task within two taps. Large touch targets, one primary action per screen, readable in bright light.
+- **Setup in 60 minutes or less.** A non-technical owner should go from sign-up to first saved order in one sitting, measured as a median of 60 minutes or less. Use plain language, sensible defaults and ready-made templates per business type.
+- **Warm, not corporate.** These are real people running real businesses. We want human, confident and friendly. **Designer decision:** original creative direction, including illustration, iconography and tone.
+- **One screen, one job.** Prefer simple focused screens over dense dashboards. Show what needs attention first (late jobs, unpaid invoices, tasks on hold).
+- **Every business feels like its own.** The customer-facing side takes on the business's logo, colors and name. The platform's own brand stays in the background.
+- **Money is always clear.** Anywhere an amount appears, show paid, balance and status the same way across the product.
+
+### 4.2 Constraints
+
+| Area | Requirement |
+| --- | --- |
+| Devices | Worker app on low and mid-range Android phones first, iOS second. Manager screens on laptop and tablet. Customer pages on any phone browser. Starting values **[CONFIRM against S.I.G's real phones]**: Chrome on Android 8 and up with 2 GB RAM. |
+| Worker app type | Phase 1: an **installable web app** (PWA). A native app is a later decision. |
+| Connectivity (Phase 1) | A worker can open assigned tasks (with measurements and photos) and change task status with **no internet**. Changes sync when the phone reconnects. If a task was reassigned or cancelled while the worker was offline, the update is **held** and the manager sees it. Wages use the time the **server received** the update. The device time is also stored. Creating orders needs internet. Show clear offline, "waiting to sync" and "synced" states. |
+| Connectivity (Phase 4) | Full offline operation for all roles, with conflict handling. |
+| Page weight | Customer tracking page loads in under 3 seconds on a 3G connection, with under 200 KB before photos. |
+| Photos | Resized on the phone to 1600 px on the long edge before upload. Maximum 10 photos per Item **[CONFIRM]**. Photos taken offline are uploaded when the phone reconnects. |
+| Language | English at launch. Layouts must survive longer text so Yoruba, Hausa, Igbo, Nigerian Pidgin and French can be added later. Ask S.I.G's workers which language they read (see §11.2). |
+| Currency | Naira first, stored in whole kobo. Currency symbol is a business setting so other currencies work later. |
+| Time zone | Stored in UTC. Shown in the business's time zone (default Africa/Lagos). |
+| Accessibility | Strong contrast, text that scales, and status never shown by color alone. |
+| Branding | Each business can set a logo, one or two brand colors and a name. Define how these flow through customer-facing screens without breaking readability. |
+| Responsive | Manager web screens work from tablet width upward. Customer pages work from small phone width upward. |
+| Privacy | Customer consent to messages is recorded at order creation. Measurements and photos are visible only to staff of that business. **Saved measurements are kept until the owner or manager updates or deletes them.** Deleting a saved measurement set removes it from the customer's profile only. The copy on a past order stays, because it is part of that order's record for rework and pay. If a customer asks to be erased, the owner erases the customer record. That clears name, phone, address, saved measurements, measurement copies on their orders and photos. The orders, payments and wage records stay and show "Deleted customer". The retention period for photos is a **pre-launch check with a lawyer** under Nigeria's data protection law. |
+
+### 4.3 Front-end requirements
+
+Three items that design, front-end and back-end must agree on. All numbers are starting values **[CONFIRM]**.
+
+#### 4.3.1 Offline interface states
+
+These apply to the worker app. Every state uses **text plus an icon**, never color alone.
+
+| State | When it shows | What the worker sees |
+| --- | --- | --- |
+| Online | Phone is connected | No marker |
+| Offline | No connection | A banner: "You are offline. Your changes will be saved." |
+| Waiting to sync | A change was made offline and is queued | A marker on that task, plus a count of waiting changes |
+| Syncing | The phone reconnected and is sending changes | A progress marker on the queued items |
+| Synced | A queued change was accepted | A short confirmation, then the marker disappears |
+| Held | The task was reassigned or cancelled before the change arrived | "Held: your manager changed this task. They will review your update." The worker cannot edit the task until the manager acts. |
+| Failed | A change could not be sent after retries | "Could not save." with a **Retry** button. The change is kept on the phone. |
+
+Rules:
+- Photos taken offline show their own "waiting to upload" marker.
+- The task list and task detail must open with no connection, using the data already on the phone.
+- The manager's order timeline shows the phone time and the time the server received the update.
+- Creating orders needs internet. Order screens show "Needs internet" when offline.
+
+#### 4.3.2 Supported browsers and devices
+
+| Surface | Supported |
+| --- | --- |
+| Worker app (installable web app) | Chrome on Android 8 and up with 2 GB RAM. Safari on iOS: last two major versions. |
+| Customer tracking and payment pages | Any current phone browser: Chrome, Safari, Samsung Internet. Last two major versions. |
+| Manager web and tablet | Chrome, Edge, Safari and Firefox: last two major versions. |
+| Not supported | Internet Explorer and browsers older than the versions above. |
+
+Confirm the Android version and RAM against S.I.G's real phones before design sign-off. Show a plain message if a browser is not supported.
+
+#### 4.3.3 Performance budget
+
+| Page | Limit |
+| --- | --- |
+| Customer tracking page | Loads in under 3 seconds on 3G. Under 200 KB before photos. |
+| Worker app first load | Under **[CONFIRM, for example 300 KB]** of JavaScript. Later screens load only when needed. |
+| Photos | Resized on the phone to 1600 px on the long edge before upload. |
+
+The build checks these limits. A page that goes over its limit fails the build until it is fixed.
+
+---
+
+## 5. Phase 1: Tailoring MVP
+
+**Goal.** Let one tailoring or clothing business run its entire order cycle on the platform: take the order, assign the sewing, track progress, collect payment, notify the customer and pay staff correctly. Target: a real business like S.I.G Clothing using it daily with 3 to 20 staff. Build for S.I.G. Judge the gate on three pilot businesses.
+
+**Phase 1 is successful when the eight measures in §16.1 are met.**
+
+### 5.1 Features in scope
+
+| Area | What the user can do |
+| --- | --- |
+| Business setup | Create the business, add logo and colors, choose the tailoring template (stages and fields come pre-filled), set the default payment plan (the manager can change it for each order), the pay period (start day, payday and cut-off time), payment terms and **bank details shown on invoices**, invite staff. The business gets a free subdomain (e.g. `sigclothing.ojuowo.com`) chosen at sign-up. The owner can change the subdomain up to **3 times**; each old address redirects to the current one for 30 days after the change. |
+| Business landing page | Each business gets a public page at its subdomain. The owner fills a guided editor (headline, about text, services, how-it-works steps, customer stories, contact details) with a live preview. The page uses the business's logo and brand colors. Changes autosave as a draft; the owner publishes when ready. The page is not live until published. See §5.5 for full details. |
+| Staff payouts (Paga) | The owner reviews a weekly wage run and pays all workers to their bank accounts through Paga. The simpler fallback (if Paga integration is not ready) is "mark as paid" with a downloadable payment list. The owner can also set an automatic payout schedule (sweep). Business balances are shown as four buckets: Total, Available, Payout, In transit. See §5.6 for full details. |
+| Staff accounts | Owner creates staff by phone number, sets role and skills (top, trousers, agbada, ironing, packaging). Each tailor has one main skill. Owner sets the **pay rate per piece**: one amount for each item type and stage (for example, a set amount for each agbada sewn). Complexity levels are optional. If the owner sets one rate, every Item uses it. Manager can mark a worker as **away** for the day. |
+| Customers | Create a customer profile with contact details and message consent. Store measurement sets, style preferences and order history. Reuse saved measurements for returning customers. The owner or manager can edit or delete a saved measurement set at any time. |
+| Order intake | Create an order for a customer. Add one or more Items (top, trousers, and so on). For each Item attach fabric photos, material type, color, quality, quantity, design choice, reference images, measurements, due date, price, and **complexity (simple, standard, complex) [CONFIRM levels]**. Measurements are copied onto the Item when the order is confirmed, so later changes to the customer's saved set do not alter past orders. |
+| Task assignment | Tasks for a stage are created when an Item enters that stage. The platform suggests a worker per task (skill match, then fewest open tasks). The manager accepts, changes, or assigns manually. |
+| Worker queue | Worker sees only their assigned tasks, with measurements and fabric photos attached. Updates status (see §5.4). Can work offline (see §4.2). |
+| Stage hand-off | When all sewing tasks on an Item are approved, the Item moves to ironing and the ironer sees it. When ironing is done, the Item moves to packaging, then Ready. |
+| Verification | Each stage has a setting **"Needs manager approval"**. Tailoring template: sewing **yes**; ironing and packaging **no** (auto-approved when completed). The manager approves or sends back for rework with a note. Only approved or auto-approved tasks count toward wages. |
+| Invoicing | Generate an invoice from the order. Every invoice has a **due date** (default: the order due date, changeable under payment terms). A sent invoice is **locked**. A change creates a new numbered revision, and the old one is marked superseded. Send by WhatsApp with the tracking link. The invoice shows the business's bank details for transfer. Shows the order's payment plan and the balance still owed. |
+| Payments | **Customers do not pay through the platform.** They pay the business directly by cash or transfer. The manager records each payment. **Payment plan is chosen for each order:** pay in full first; part now and the rest when the job is done; or several part payments. The business default pre-fills the choice. If the plan needs money first (full or part), the order waits at Confirmed until that amount is recorded. The manager can start anyway by giving a reason. Every payment is stored as whole kobo, with who and when, and **cannot be deleted**. A mistake is fixed with a reversing entry. Final receipt when fully paid. |
+| Cancel order | Manager cancels an order with a required reason. If money was paid, the manager records a **manual refund entry**. There are no online refunds, because customers do not pay online. |
+| Notifications | Exactly the Phase 1 rows in §10.1. |
+| Customer tracking page | A branded page, opened from a WhatsApp link with no login, showing the Order stage, each Item's stage, balance and pickup or delivery details. |
+| Wages | **Pay is per piece.** Each approved task is logged against the worker with its pay amount. A worker's pay for a pay period is the total of their approved tasks (for example, the number of agbada sewn times the price for each agbada). Records of every task are kept. The pay period is a business setting (default: Monday start, **Saturday-night** payday). The owner can also run a wage run for **any date range**. The owner reviews, can add **adjustment lines** (amount and reason), and marks the run as paid. Workers see their own earnings. |
+| Dashboard and reports | Dashboard: today's orders, late orders, unpaid balances, tasks on hold. Reports: late orders, unpaid balances, weekly revenue, wage summary. |
+
+### 5.2 Not in Phase 1
+
+- Other business types and the workflow configurator (Phase 2A).
+- **Custom domains** (Phase 2B). Phase 1 uses the free subdomain on our address only.
+- **Basic inventory** (moved to Phase 2C, together with deeper inventory).
+- The **supplier network** (Phase 3).
+- Subcontractors (Phase 2B), route optimization and delivery partner integration (Phase 3).
+- Native customer app. Customers use WhatsApp and the web page.
+- **Customers paying through the platform**, and online refunds. Payments are recorded by the manager.
+- **Subscription billing** (Phase 2A).
+- **Discounts and tax on invoices.** The manager enters the final price.
+- **Delivery handled by the platform.** The business arranges delivery. The order only records "delivered".
+- **Replies to WhatsApp messages.** They are not handled in Phase 1. Messages say: "This number is not monitored. Call [business phone]."
+- Multiple workers on one task (one active assignee per task).
+
+### 5.3 The order journey
+
+This is the main flow to design first. Each step lists who does it and what the platform does.
+
+1. **Customer walks in.** The manager finds or creates the customer. If the customer is returning, saved measurements appear.
+2. **Manager creates the order.** Adds each Item, uploads fabric photos, fills material details, confirms measurements, sets complexity, price and due date. Customer consent to messages is recorded.
+3. **Invoice and payment plan.** Platform generates an invoice. The manager picks the payment plan for this order (the business default pre-fills it): full first, part now and balance later, or several part payments. The customer pays the business by cash or transfer, and the manager records it. If the plan needs money first, the order stays **Confirmed but not started** until that amount is recorded. The manager can start anyway by giving a reason.
+4. **Tasks are created and assigned.** Sewing tasks are created for each Item. The top goes to one tailor, the trousers to another. Platform suggests, manager confirms.
+5. **Workers sew.** Each worker opens their queue, sees the fabric photos and measurements, starts the task, updates status, completes it.
+6. **Manager verifies quality.** Approves or sends back for rework with a note. The same worker redoes the work. Approval is what moves the Item to ironing.
+7. **Ironing and packaging.** The ironer sees the Item, completes the ironing task, then the packaging task. Both are auto-approved on completion.
+8. **Customer is notified.** WhatsApp message: your clothes are ready, with balance due and pickup or delivery details.
+9. **Final payment and release.** Customer pays the balance to the business, in person or by transfer. The manager records it and the platform issues the receipt. Manager marks the order collected or delivered. If a balance remains, the manager must give a reason to release it.
+10. **Wages log.** Each approved task is added to the worker's total for the current pay period.
+
+*Phase 1 order journey: 10 steps, 1 rework loop.* Only approved tasks (step 6, or auto-approved in step 7) are logged toward wages in step 10.
+
+**Wage rules**
+
+- The task's **pay amount is copied onto the task when it is approved.** A later rate change never rewrites past pay.
+- **Pay is per piece.** A worker's amount for a task is the rate for that item type and stage. The more approved pieces, the higher the pay.
+- The **pay period is a business setting**: start day (default Monday), payday (default Saturday) and cut-off time (starting value: Saturday 6 pm). Work approved after the cut-off goes into the next run. Sunday work goes into the next run by default, and the owner can move it into the current one.
+- The owner can run a wage run for **any date range**, for example when a week has many jobs or payday moves. A task can be in only one wage run.
+- **Rework** is done by the same worker and paid **once**, when finally approved.
+- If a task is **reassigned after work has started**, the manager decides how much the first worker is paid and records it as an adjustment line with a reason.
+- The owner can add an **adjustment line** (amount and reason) to any wage run. Adjustments are recorded and cannot be deleted.
+- Wages use the time the server received an update, not the phone's clock.
+
+### 5.4 Screens and states that need special attention
+
+- **Order form.** Long and detailed, so design it in steps or sections. Photo upload from the phone camera must be fast. Returning-customer measurements should pre-fill.
+- **Measurement sheet.** Needs a clear, human layout (body diagram or labeled fields). **Designer decision:** how to make measurements quick to enter and easy to read at a sewing table.
+- **Worker task card.** Must show the Item, who it is for (first name), due date, fabric photo, measurements and one big status action.
+- **Order timeline.** A vertical history of every stage, task, payment and note. Used by the manager and, in simplified form, by the customer.
+- **Empty states.** A brand-new business has no orders or staff. Empty screens should guide the next step.
+
+**One list of states, used everywhere.**
+
+| Object | States | Allowed moves |
+| --- | --- | --- |
+| Task | Assigned, In progress, On hold (reason required), Completed, Needs rework, Approved | Assigned → In progress. In progress → On hold or Completed. On hold → In progress. Completed → Approved or Needs rework. Needs rework → In progress. |
+| Order | Draft, Confirmed, In progress, Ready, Collected or Delivered, Cancelled | Draft → Confirmed → In progress → Ready → Collected or Delivered. Cancel allowed from Draft, Confirmed or In progress. |
+| Payment (of an order) | Unpaid, Part paid, Paid, Overdue, Refunded | **Overdue** is not stored. It means the invoice due date has passed and a balance remains. **Refunded** means a manual refund entry was recorded. |
+
+- An order is **Late** when its due date has passed and it is not Ready (business time zone).
+- Putting a task **On hold** notifies the manager and shows on the dashboard.
+- Allowed moves are defined in one table and enforced on the server. They also decide what happens in a sync conflict.
+
+### 5.5 Business landing page
+
+Every business gets a public page at its subdomain. The owner never edits layout or code — we control the template. The owner supplies text, images and colors.
+
+**Owner flow**
+
+1. Open "My page" from the dashboard or the onboarding checklist.
+2. The page opens pre-filled with example content for a tailoring business; the owner edits instead of facing a blank page.
+3. Fill sections in a guided editor with a live preview (phone and laptop toggle).
+4. Autosaves as a draft. Nothing is public until the owner publishes.
+5. Preview via a private link.
+6. Publish. The page goes live at the business's subdomain.
+7. Share: copy link, show QR code, or tap to send on WhatsApp.
+8. Edit later: changes stay as a draft until the owner publishes again. The owner can unpublish.
+
+**Sections the owner fills**
+
+| Section | What they provide | Required |
+| --- | --- | --- |
+| Header | Logo (from setup) and business name. Nav links are automatic. | Yes |
+| Hero | Headline (60 chars), supporting line (140 chars), one main image, button action (call, WhatsApp, or request an order). | Yes |
+| About | Heading, text (600 chars), optional image. | Yes |
+| What we offer | Up to 12 items — image, title (40 chars), description (140 chars), optional "from" price. At least 1. | Yes |
+| How it works | 3–5 numbered steps. Title 30 chars, text 100 chars. | No |
+| Customer stories | Up to 6 quotes — name, quote (200 chars), optional photo. | No |
+| Contact | Phone, WhatsApp, address, opening hours, map link, social links. At least one contact method. | Yes |
+| Footer | Automatic: business name, links, "Made with Ojúòwò" mark. | Automatic |
+
+**Look and colors**
+
+| Setting | Options |
+| --- | --- |
+| Primary color | Swatches or typed color code. Used for buttons and highlights. |
+| Accent color | Swatches or typed color code. Used sparingly. |
+| Font style | A small set of pairings chosen by the designer (3 or 4). No free font upload. |
+| Corner style | Sharp, soft, or round. Applies to buttons and cards. |
+| Hero style | Image with overlay, or solid color block. Text always stays readable. |
+
+Automatic readability check: if colors make text unreadable, the page warns and offers the closest readable alternative. The owner cannot publish unreadable text.
+
+**Page states to design:** not started, draft, published, published with unpublished changes, unpublished.
+
+### 5.6 Staff payouts, business balances, and automatic sweep
+
+**Overview.** The owner reviews a wage run and pays all workers to their bank accounts through Paga. Ojúòwò never holds the money. Payouts depend on confirmation from the lawyer and Paga. Until both confirm, the safe fallback is: the owner approves the run, the system produces a downloadable payment list, and the owner marks each person paid after paying outside the system. Design the flow so the live Paga payout step can be switched on later without redesigning the rest.
+
+**Wage run flow**
+
+1. Open Pay and choose the period (default: current week).
+2. Review the wage run: each worker with approved tasks, rate per task, and total. Salaried staff show a fixed amount.
+3. Open any worker to see the tasks behind their total. Tasks awaiting approval are shown separately and not counted.
+4. Adjust: add a bonus or deduction with a required reason. Each adjustment is recorded with who made it.
+5. Resolve warnings: worker with no bank details, task with no rate, total much higher than usual.
+6. Approve the run. After approval the run is locked; rates are fixed as they were at approval.
+7. Pay: owner confirms, enters PIN or one-time code. System shows total and recipient count.
+8. Watch progress: each person shows as sending, paid, or failed.
+9. Handle failures: owner sees the reason, fixes bank details, retries only that person.
+10. Each worker gets a WhatsApp/SMS notification and sees the payment in their earnings.
+
+**Worker earnings view.** The worker sees: earnings to date this week, approved tasks behind it, tasks waiting for approval (not counted yet), and payment history. If they think a task was missed, they can raise a question that goes to the manager.
+
+**Business balances (Paga account)**
+
+Each business has one account at Paga. We show it as four named balances. Moving money between them is instant and does not call Paga.
+
+| Balance | Meaning | Money in | Money out |
+| --- | --- | --- | --- |
+| Total | Sum of all other balances. Read-only. | — | — |
+| Available | Money the business can spend or withdraw. | Customer payments, top-ups from the owner's bank. | Withdraw to bank, move to Payout, pay suppliers (later). |
+| Payout | Money set aside for staff pay only. | Moved from Available, or topped up directly. | Staff payouts only. Can be moved back to Available by the owner. |
+| In transit | Payout money sent and not yet confirmed. | Created when a payout starts. | Clears to paid or returns to Payout on failure. |
+
+Rules:
+- Wage payouts come only from the Payout balance. If short, the owner is told by how much before sending.
+- Moving money into Payout needs a manager or owner. Moving it back out needs the owner.
+- Customer payments land in Available, not automatically in Payout. An optional rule can set aside a percentage.
+- Unregistered businesses can use Available and Payout only after reaching Paga KYC level 3. Show a progress screen until then.
+
+**Automatic payout sweep**
+
+The owner or a manager can set a schedule (e.g. every Friday at 4 pm). On that day the system pays each worker their approved earnings from the Payout balance.
+
+Rules:
+- The sweep pays only approved tasks; each task is paid once.
+- The owner sets a limit per sweep and per person. Anything above the limit waits for owner approval.
+- A manager can create a sweep, but it starts only after the owner approves the schedule and limit once.
+- If Payout balance is short, the sweep pays nobody and notifies the owner. An option lets the sweep top up from Available up to a set amount.
+- If a worker changed their bank details in the last 24 hours, their payment waits for owner confirmation.
+- Each sweep produces a summary: who was paid, who failed, and why.
+- The owner can pause all sweeps with one switch.
+- The manual wage run in §5.3 remains available for owners who want to review before paying.
+
+**Safeguards to show in the UI**
+- Pay always needs the owner's approval, never a manager's alone (unless the owner turns on delegation).
+- A confirmation step shows the total and recipient count before money moves.
+- A payment cannot be sent twice. A duplicate tap shows the first result only.
+- The business needs enough Payout balance before sending. If not, the screen says so and tells the owner what to do.
+- Every step has a record of who did it and when.
+
+**States to design:** no approved work this period, run in draft, run approved, payout in progress, partly paid, all paid, person failed (with reason), run waiting on missing bank details, provider unavailable, insufficient Payout balance, and a run corrected after the fact (new adjustment in the next run, never an edit of a closed run).
+
+---
+
+## 6. Phase 2: Many business types, customization and custom domains
+
+**Goal.** Turn the tailoring product into a platform. Any stage-based business can sign up, describe how it works, and get a system shaped to it, with its own branding, public page and web address.
+
+Phase 2 is split into three parts, built and gated in order.
+
+### 6.1 Phase 2A: Templates, workflow, branding, plans
+
+| Area | What the user can do |
+| --- | --- |
+| Business type onboarding | During sign-up the owner picks a business type (tailoring, shoe making, farm selling by order, other). The platform loads a matching template of stages, order fields, roles and terms. |
+| Workflow builder | Owner adds, removes, renames and reorders stages. For each stage choose who does it (role or skill), whether it creates tasks, whether it needs manager approval, and whether the customer is notified. |
+| Custom order fields | Owner adds or removes fields on an Item and on a customer profile (text, number, date, photo, dropdown, measurement set). |
+| Custom labels | Rename platform words (worker becomes stylist, order becomes appointment). |
+| Branding | Upload logo, choose brand colors and font style from a small set, preview on customer screens before publishing. |
+| Customer online payments and refunds | Not planned. Added only if the business decides customers should pay through the platform. |
+| Plans and billing | Business picks a subscription plan, upgrades or downgrades, sees invoices from us and plan limits. The subscription is paid through Paystack (card or bank transfer). |
+
+**Rules for live businesses**
+
+- Editing a workflow changes **only new Items**. Items already in progress keep their stage.
+- A stage that has Items in it can be **hidden but not deleted**.
+- Removing a field **hides it and keeps its data**.
+
+### 6.2 Phase 2B: Public presence, customers, appointments, subcontractors
+
+| Area | What the user can do |
+| --- | --- |
+| Public landing page | **Moved to Phase 1** (see §5.5). Every business gets a branded landing page from day one. |
+| Custom domain | Business has a free subdomain from Phase 1. Phase 2B adds the ability to connect the business's own domain, with a guided setup that checks the DNS connection and shows clear status, including wrong or expired domain states. |
+| Customer onboarding | Customers request an order from the landing page, create an optional account, see all their orders. |
+| Appointments | For service businesses like salons: bookable time slots, per-staff schedules, reminders and protection against double booking. This is a **new module**, separate from the stage model. |
+| Subcontractors | A manager assigns a task to an external person with a limited login. They see only that task and update its progress. |
+| Skill-based auto-assignment | A manager can switch on automatic assignment by skill and workload, with manual override. |
+
+### 6.3 Phase 2C: Depth
+
+| Area | What the user can do |
+| --- | --- |
+| Inventory | Record materials (fabric, thread, buttons) with quantity, color and supplier name. Low-stock alerts. Stock used per order. Then stock movements, purchase records and multiple storage locations. |
+| Expenses | Record running costs such as fuel, generator servicing and equipment maintenance, and see them against revenue. |
+| Two-way WhatsApp | Customers can reply and the business can answer inside the platform. Until then, replies are directed to the business's own phone number. |
+
+### 6.4 Flows to design
+
+- **New business sign-up and setup wizard.** Account, business type, template preview, branding, staff invite, first order. Target 60 minutes or less.
+- **Workflow builder.** Visual and forgiving: drag stages around and see a live preview. **Designer decision:** the interaction model for building a workflow without it feeling technical.
+- **Landing page editor.** Choose blocks, add photos, preview on phone and laptop, publish.
+- **Custom domain connection.** Step-by-step, copyable values, a "check my connection" button, and clear success and failure states.
+- **Customer request flow.** From the landing page to a submitted request to confirmation, in as few taps as possible.
+- **Plan selection and upgrade.** Plans compared simply, with limits shown where they matter (for example when a business tries to add an eleventh staff member on a plan that allows ten).
+
+### 6.5 Design challenge
+
+The same screens now serve very different businesses. The design system must stretch from a sewing workshop to a farm to a salon through configurable fields, labels, colors and stage lists, without any of them feeling like a generic template.
+
+---
+
+## 7. Phase 3: Payroll, suppliers, logistics and analytics
+
+**Goal.** Pay staff through the platform, connect businesses to the people they buy from, and give owners deeper insight.
+
+**Build order: payroll first, then the supplier network.** Payroll uses existing users. Suppliers require recruiting a second kind of user.
+
+### 7.1 Features in scope
+
+| Area | What the user can do |
+| --- | --- |
+| Staff payroll payouts | **Moved to Phase 1** via Paga (see §5.6). Phase 3 extends this with platform commission on each payout (rate **[CONFIRM]**), deeper payslip history, and advances/deductions. |
+| Business wallet | The Paga-backed balance model is in Phase 1 (see §5.6). Phase 3 adds subscription payments from the wallet and a commission on payouts, subject to legal review. |
+| Payroll safeguards | Worker account-name verification before the first payout. Per-worker success or failure result. **Payouts are not assumed to arrive on Sundays.** The screen shows the expected arrival time and warns when a payout would land on a Sunday **[CONFIRM with Paga]**. |
+| Advances and deductions | Record salary advances, penalties and bonuses and see them in the wage run. |
+| Supplier accounts | A supplier creates a shop profile, lists items with prices and photos, and manages stock. |
+| Business to supplier link | A business invites its regular suppliers. A supplier can connect with many businesses. Invite-only. |
+| Procurement | Business creates a purchase request, the supplier accepts, prices are confirmed, the business pays through the platform and goods are marked received. Stock updates automatically. |
+| Supplier payment requests | A supplier can request payment **only against a purchase request the business accepted**. The business approves and pays. |
+| Supplier dashboard | Supplier sees orders from connected businesses, who has paid and who owes, and stock levels. |
+| Delivery requests | Create a delivery request with a third-party partner, share tracking with the customer and confirm drop-off. |
+| Route planning | Show pending deliveries on a map and suggest an efficient route. |
+| Equipment and maintenance | List equipment, schedule servicing, log fuel and repairs, and get reminders. |
+| Analytics | Revenue trends, high-value customers, popular designs and materials, average payment time, worker productivity, average completion time, inventory usage, and cost against revenue. |
+| Exports | Download reports as PDF or spreadsheet for accountants. |
+
+### 7.2 Flows to design
+
+- **Weekly payroll run.** Review totals per worker, adjust, confirm, pay, and view the receipt. High-trust moment, so make amounts and confirmations unmistakable.
+- **Connecting to a supplier.** Invite by phone or link, accept, see each other's profile.
+- **Buying materials.** From browsing a supplier's items to placing a request, paying and confirming receipt.
+- **Supplier sends a payment request.** How it appears for the business, and how approval and payment feel.
+- **Delivery handoff.** Request, partner accepted, in transit, delivered, with the customer kept informed.
+- **Owner analytics view.** **Designer decision:** how to present a lot of numbers so an owner who is not a data person can act on them.
+
+### 7.3 Design challenge
+
+A second kind of user, the supplier, now has their own small business on the platform. Design their experience as a lighter sibling of the business owner's experience, and make the connection feel like a trusted relationship, not a marketplace of strangers.
+
+**Data rule.** A supplier connection crosses business boundaries. Each side sees only the fields on shared orders and nothing else.
+
+---
+
+## 8. Phase 4: Scale and ecosystem
+
+These are directional ideas, not a commitment. Design does not need to start here, but four decisions made in Phase 1 must leave room for them.
+
+**Four rules for Phase 1 that protect Phase 4**
+
+1. Phone numbers are stored in international format, so people can be matched later.
+2. Customer records and measurements belong to one business. Sharing across businesses needs the customer's consent.
+3. Every task stores its start time and finish time.
+4. Every record carries its business, and nothing assumes a single location.
+
+| Idea | What it would do | Note |
+| --- | --- | --- |
+| Native customer app | One app where a customer follows orders across every business. | Needs a customer identity outside one business. |
+| Shareable profile | A customer's measurements carried across businesses, with permission. | Consent required. |
+| Marketplace | Customers discover nearby businesses by type and location. | Customer discovery only. Supplier connections stay invite-only. |
+| Smart assignment | Suggestions that learn which worker finishes which kind of task fastest. | Uses the task times from rule 3. See §13. |
+| Multi-branch businesses | One owner, several locations, branch managers, branch-level reports. | |
+| Loyalty and promotions | Points, discounts and campaigns to past customers. | |
+| Integrations | Accounting tools, more payment providers, SMS and other messaging channels. | |
+| Business financing | Using payment and order history to offer working-capital options. | **Subject to legal review.** |
+| Open API and app store | Let other developers build add-ons. | |
+| Offline-first worker app | Full offline operation with conflict handling. | Phase 1 has the limited offline mode in §4.2. |
+
+---
+
+## 9. Screen inventory by phase
+
+**Priority is design order.** Screens that others depend on are designed first. Priority A is designed first.
+
+### Phase 1 screens
+
+| Screen | Used by | Device | Priority |
+| --- | --- | --- | --- |
+| Sign-up and business setup wizard (Flow A) | Owner | Web | A |
+| Login, one-time code, PIN and PIN reset | All staff | All | A |
+| Staff invite, first login, and welcome screens (Flow C) | Owner, staff | Web, phone | A |
+| Business settings (branding, pay rates, payment terms, default payment plan, pay period, bank details) | Owner | Web | A |
+| Staff list, staff profile, create staff, devices | Owner | Web | A |
+| Dashboard (today's orders, late orders, unpaid balances, tasks on hold) | Owner, manager | Web, tablet | A |
+| Customer list and customer profile | Manager, cashier | Web, tablet | A |
+| Measurement sheet (view and edit) | Manager, worker (view) | Web, tablet, phone | A |
+| New order form | Manager | Web, tablet | A |
+| Order detail with timeline | Owner, manager | Web, tablet | A |
+| Task assignment panel (suggested worker, override) | Manager | Web, tablet | A |
+| Worker home: my tasks | Worker | Phone | A |
+| Worker task detail with status update | Worker | Phone | A |
+| Worker earnings and payment history | Worker | Phone | A |
+| Verification queue and rework note | Manager | Web, tablet | A |
+| Invoice view and send | Manager, cashier | Web, tablet | A |
+| Record payment | Manager, cashier | Web, tablet | A |
+| Cancel order and record refund | Manager | Web, tablet | A |
+| Wage run (any date range) and review, including adjustment | Owner | Web | A |
+| Customer tracking page (branded, no login) | Customer | Phone browser | A |
+| WhatsApp message templates | Customer | WhatsApp | A |
+| Business landing page editor (Flow B) | Owner | Web, phone | A |
+| Public business landing page | Customer | Phone, web browser | A |
+| Business balances (Total, Available, Payout, In transit) | Owner | Web | A |
+| Staff payout flow with Paga (or mark-as-paid fallback) (Flow F) | Owner | Web | A |
+| Automatic payout sweep settings | Owner, manager | Web | A |
+| Go-live checklist | Owner | Web | A |
+| Reports (late orders, unpaid balances, weekly revenue, wage summary) | Owner | Web | B |
+| Notifications center | All staff | Web, phone | B |
+| Empty states | All | All | B |
+
+### Phase 2 screens
+
+| Screen | Used by | Device | Priority |
+| --- | --- | --- | --- |
+| Business type picker and template preview (2A) | Owner | Web | A |
+| Workflow builder (2A) | Owner | Web | A |
+| Custom field and label editor (2A) | Owner | Web | A |
+| Branding editor with live preview (2A) | Owner | Web | A |
+| Plans, billing and plan limits (2A) | Owner | Web | A |
+| Landing page editor and public landing page | **Moved to Phase 1** (see §5.5). | — | — |
+| Custom domain connection (2B) | Owner | Web | A |
+| Customer request flow and optional account (2B) | Customer | Phone | A |
+| Customer order history (2B) | Customer | Phone | B |
+| Subcontractor task view (2B) | Subcontractor | Phone | B |
+| Appointment calendar and booking (2B) | Manager, customer | Web, phone | B |
+| Inventory (2C) | Manager | Web, tablet | B |
+| Expense tracker (2C) | Owner, manager | Web | B |
+| Platform admin: businesses, plans, support | Our team | Web | C |
+
+### Phase 3 screens
+
+| Screen | Used by | Device | Priority |
+| --- | --- | --- | --- |
+| Payroll run and payout confirmation | **Phase 1** (Paga, see §5.6). Phase 3 extends with commission and payslips. | — | — |
+| Business wallet: balance, top-up, payouts and commission | **Phase 1** (balances via Paga, see §5.6). Phase 3 adds commission and subscription billing. | — | — |
+| Worker earnings and payslips (extended) | Worker | Phone | A |
+| Supplier shop profile and item catalog | Supplier | Phone, web | A |
+| Supplier connection and invite | Business, supplier | Phone, web | A |
+| Purchase request, supplier quote and receiving goods | Business, supplier | Phone, web | A |
+| Payment request (supplier creates, business approves) | Supplier, owner | Phone, web | A |
+| Delivery request and tracking | Manager, customer, partner | Web, phone | B |
+| Route map | Manager | Web | B |
+| Equipment list, maintenance calendar, fuel and repair log | Owner, manager | Web, phone | B |
+| Analytics dashboards | Owner | Web | B |
+| Report export | Owner | Web | C |
+
+---
+
+## 10. Notifications, messaging and pricing touchpoints
+
+Most customers will meet the product through WhatsApp messages and the tracking page before they ever see a full screen. Treat these as designed surfaces.
+
+### 10.1 Messages to design
+
+This table is the single list. §5.1 refers to it.
+
+| Message | To | Channel | Phase |
+| --- | --- | --- | --- |
+| Order confirmed, with summary and tracking link | Customer | WhatsApp | 1 |
+| Invoice, with bank details and tracking link | Customer | WhatsApp | 1 |
+| Payment received, with receipt | Customer | WhatsApp | 1 |
+| Stage update (only for stages the business marks visible) | Customer | WhatsApp | 1 |
+| Your clothes are ready, with balance due and pickup or delivery details | Customer | WhatsApp | 1 |
+| Payment reminder for outstanding balance (one the day after the due date, then weekly, maximum 3; manager can switch off per order) **[CONFIRM]** | Customer | WhatsApp | 1 |
+| New task assigned, task due soon (24 hours before due), rework requested | Worker | In app and push | 1 |
+| Late order, failed payment, task on hold | Owner, manager | In app and push | 1 |
+| Staff one-time login code | Staff | SMS or WhatsApp (SMS allowed for login codes only) | 1 |
+| Booking confirmation and reminder | Customer | WhatsApp | 2B |
+| Wage paid, with payslip | Worker | In app and WhatsApp | 3 |
+| Supplier payment request and approval | Owner, supplier | In app and WhatsApp | 3 |
+
+**Rules for WhatsApp**
+
+- Templates have length and format limits and must be approved by the provider. **Submit the Phase 1 templates before design is finished**, because approval time is outside our control.
+- Keep messages short, in plain language, and include the business name.
+- Phase 1 sends from **one platform number**. Messages include the business name.
+- Customer consent is recorded at order creation.
+- Every message has a delivery status the manager can see (queued, sent, delivered, failed).
+- **Fallback.** If a message fails, the order shows a **"Copy tracking link"** button so the manager can paste the link into their own WhatsApp.
+
+### 10.2 Pricing touchpoints
+
+We plan to charge businesses a monthly subscription based on plan tiers (staff numbers and feature access), with a **commission on staff payouts** made through the wallet (rate **[CONFIRM]**). Final prices are not set, so design with placeholders. See §15 for the business model.
+
+- **Phase 1 pilots pay nothing.** Billing starts in Phase 2A.
+- A plan comparison screen that explains tiers in plain language.
+- Limit messages that feel helpful, such as when a business reaches its staff limit.
+- A billing page showing the current plan, next payment date and past invoices.
+- Locked features shown clearly with an upgrade path, rather than hidden.
+
+---
+
+## 11. Decisions, pre-launch checks and designer deliverables
+
+### 11.1 What we need from design
+
+Suggested order of work. Tick items off as they are delivered.
+
+- ☐ Brand direction and platform name exploration (logo, color, tone, illustration style).
+- ☐ User journeys and low-fidelity flows for the Phase 1 order journey (§5.3).
+- ☐ **Clickable prototype of the order journey, tested with S.I.G**, before the full design system and all screens.
+- ☐ Design system: type, color, spacing, components, status and payment states, built to be themed per business.
+- ☐ Worker mobile app, Phase 1 priority A screens, tested on a low-end Android phone.
+- ☐ Manager web and tablet, Phase 1 priority A screens.
+- ☐ Customer tracking page, with theming rules for business branding.
+- ☐ WhatsApp message designs for the Phase 1 list in §10.1.
+- ☐ Phase 1 priority B screens.
+- ☐ Onboarding wizard and workflow builder concept (Phase 2A), early exploration so Phase 1 decisions do not block it.
+- ☐ Phase 2 and Phase 3 screens, in the order given in §9.
+
+### 11.2 Decisions and pre-launch checks
+
+All open questions are answered. Nothing here blocks design or front-end build.
+
+| # | Question | Final decision |
+| --- | --- | --- |
+| 1 | Is the tracking link enough for customers in Phase 1? | Yes, link only. |
+| 2 | Deposit and part payment | **Dynamic, chosen per order.** Pay in full first; part now and the rest when the job is done; or several part payments. The business default pre-fills the choice. Customers pay the business offline. |
+| 3 | Measurements: fixed or business-defined? | Businesses edit them. Kept until the owner or manager updates or deletes them. Deleting a saved set removes it from the profile only. The copy on a past order stays. Erasing a customer clears their personal data and measurement copies but keeps orders, payments and wage records (§4.2). |
+| 4 | Piece rate or salary? | **Per piece.** A set amount for each item type and stage (for example, each agbada sewn). More approved pieces, more pay. |
+| 5 | Multiple workers on one task? | No. One worker per task. Each worker has one main skill: top, trousers or agbada (plus ironing and packaging). |
+| 6 | Payment provider | **Paga** for staff payouts and business balances. Paga requires registered businesses to have a corporate account; unregistered businesses need KYC level 3 before they can pay out. Confirm transfer service limits and fees with Paga before build. |
+| 7 | Other payment options | The business balance model uses Paga. Customers do not pay through the platform in Phase 1. |
+| 8 | Language after English | **English only for Phase 1.** Build every screen so text can be translated. Yoruba and other languages come later. |
+| 9 | Platform name | **Ojúòwò** (face of the business). Web addresses use plain letters: `ojuowo`. |
+| 10 | Branding on customer pages | Small footer: "Powered by Ojúòwò", with the accent marks. |
+| 11 | Cutting: own task or part of sewing? | Part of sewing. |
+| 12 | Wage cut-offs | **Dynamic.** The pay period (start day, payday, cut-off time) is a business setting, default Monday start and Saturday-night payday. The owner can run a wage run for any date range. Sunday work goes into the next run by default. Paystack does not process on Sundays, so payouts are never assumed to arrive on a Sunday. |
+| 13 | Retention | Measurements: until the owner or manager updates or deletes them. Photos: period set by a lawyer before launch. |
+| 14 | Is holding or moving money regulated for us? | Customers do not pay through the platform, so no. The business wallet needs a legal review before Phase 3 build. |
+
+**Additional decisions from User Flows document (Nov 16, 2026)**
+
+| # | Topic | Decision | Status |
+| --- | --- | --- | --- |
+| 15 | Paying staff through Paga | Paga is the payment partner. Registered businesses get a corporate account. Unregistered businesses need KYC level 3 before payouts. | Decided. Open: confirm limits and fees with Paga and lawyer. |
+| 16 | Business balances | Each business has one Paga account shown as four named buckets (Total, Available, Payout, In transit). See §5.6. | Decided in principle. |
+| 17 | Pay rates — who can set | Managers can see and set pay rates, not only the owner. The owner can turn this off. | Decided. |
+| 18 | Customer "Request an order" form | In Phase 1. | Decided. |
+| 19 | Changing the web address | A business can change its free address up to 3 times. Every old address redirects to the current one and is released after 30 days. | Decided. Open: whether the 3-change limit resets yearly. |
+| 20 | Own domain | Moves to Phase 2B. | Decided. |
+| 21 | Staff payout — automatic sweep | Owner or manager can set a schedule (e.g. every Friday). Manager can create; owner must approve schedule and limit once. See §5.6. | Decided. |
+| 22 | Worker bank details | Workers add their own bank details at first login. The owner or manager can also enter them. | Decided. |
+| 23 | Payout on Sundays | Payouts are not assumed to arrive on Sundays. Screen shows expected arrival time and warns before a Sunday payout. | Open: confirm timing with Paga. |
+
+**The business wallet (decided scope)**
+- **Purpose:** pay subscriptions and pay staff.
+- **Money in:** the owner tops up through Paystack.
+- **Money out:** staff payouts to bank accounts, and subscription payments.
+- **Earnings:** the platform charges a commission on each staff payout, shown before the owner confirms.
+- **Phase:** the wallet and payouts are Phase 3. Subscription billing in Phase 2A is paid through Paystack directly.
+- **Gate:** a legal review is required before any wallet build.
+
+**Checks to finish before launch** (they do not block design or front-end work)
+1. Domain, trademark and company-name check for Ojúòwò. Say it aloud to Yoruba speakers, since *owó* (money) and *òwò* (trade) sound close.
+2. Retention period for photos, confirmed by a lawyer.
+3. Legal review of the wallet and staff payouts.
+4. Commission rate on payouts.
+5. Paystack payout timing, including Sundays and public holidays.
+6. Submit the WhatsApp templates.
+7. Fill the blanks in §1.2 (interview evidence) and the "[N]" targets in §16.2 and §16.3.
+8. Produce the cost-per-order sheet from pilot data.
+
+---
+
+## 12. Technical requirements
+
+Stack: **Next.js and TypeScript**, Prisma, PostgreSQL. Product choices for hosting, queues and storage are made by engineering. The requirements below are what the product needs.
+
+### 12.1 Multi-tenancy
+
+- Every table row carries its business. Every query filters by business through one shared helper.
+- A second line of defence at the database level (row-level security) prevents one business from reading another's data.
+- Tenant is resolved from the subdomain (`{slug}.[platform domain]`). Reserved names (such as admin, app, api, www) cannot be used as slugs.
+- Supplier connections (Phase 3) use an explicit Connection record. Each side sees only the fields on shared orders.
+
+### 12.2 Worker app (PWA)
+
+- Installable web app with a service worker.
+- Local store for the worker's assigned tasks, measurements and photos.
+- An action queue for status updates and photos taken offline, sent in order when the phone reconnects.
+- Each queued update carries a unique id, so a retry never creates a duplicate.
+- Conflict rule: if a task was reassigned or cancelled before the update arrives, the update is held for manager review.
+- Push notifications on Android. iOS web push is limited, so iOS relies on in-app and WhatsApp.
+
+### 12.3 Money
+
+**Phase 1.** Customers do not pay through the platform. The manager records payments received by the business (cash or transfer).
+
+- All amounts are stored as whole kobo in a 64-bit integer. Never as decimals.
+- Payments are append-only. Mistakes are corrected with a reversing entry.
+- Manager-recorded payments store who and when. The owner can see them.
+- Sent invoices are locked. A change creates a new numbered revision.
+- Invoices show the business's bank details so customers can pay by transfer.
+
+**Business balances (Phase 1, via Paga).** Each business has one Paga account represented as four named balances (Total, Available, Payout, In transit). See §5.6 for full rules. Provider: **Paga**.
+
+- Staff payouts go from the Payout balance to workers' bank accounts.
+- Top-ups and payouts use signature-checked webhooks that are safe to receive twice, keyed on the provider's reference.
+- Each payout shows the total and recipient count before the owner confirms.
+- Payouts are not assumed to arrive on Sundays. Show the expected arrival time and warn on Sundays **[CONFIRM with Paga]**.
+- Balance entries are append-only. A nightly job compares Paga records to our entries and flags differences.
+- Unregistered businesses require KYC level 3 on Paga before payouts are enabled.
+- Fallback (until Paga integration is confirmed): "mark as paid" with a downloadable payment list. Design must support both paths without redesigning the flow.
+
+**Business wallet extended (Phase 3).** Phase 3 adds subscription billing from the wallet and a commission on each payout (rate **[CONFIRM]**), shown to the owner before they confirm. Subject to legal review.
+
+### 12.4 Messaging
+
+- Messages go through a queue with retries.
+- Delivery status comes back from the provider and is stored per message.
+- Failed messages show to the manager.
+- One platform sender number in Phase 1.
+
+### 12.5 Security
+
+- Tracking tokens have at least 128 bits of randomness and can be regenerated.
+- PINs are stored hashed. One-time codes expire and allow a limited number of attempts. Both are rate limited.
+- All traffic uses HTTPS.
+- Permissions are checked on the server on every request, using the matrix in §2.2.
+- History tables are append-only. No update or delete is exposed in the application.
+
+### 12.6 Performance and reliability (starting values, [CONFIRM])
+
+- Tracking page: under 3 seconds on 3G and under 200 KB before photos.
+- Photos resized on the phone before upload, then stored in object storage.
+- Availability target: 99.5% per month.
+- Daily backups with a **tested restore**. Recovery point 24 hours, recovery time 4 hours.
+- Database connections are pooled so serverless functions do not exhaust them.
+
+### 12.7 Measurement
+
+Events are recorded from day one so the gates in §16 can be reported: setup start and finish, who changed each task, message delivery status, wage run edits, and tracking page opens.
+
+---
+
+## 13. AI processing pipeline
+
+**Phases 1 to 3 contain no AI.** There is no machine learning, language model or learning system in these phases. Nothing here needs an AI pipeline.
+
+### 13.1 The worker suggestion is a rule, not AI
+
+When a task is created, the platform suggests a worker like this:
+
+1. Take workers whose skills include the task's skill.
+2. Exclude workers marked **away** today.
+3. Rank by **fewest open tasks** (Assigned, In progress, On hold).
+4. Break ties by the worker who has been idle longest.
+5. Show the top suggestion. The manager accepts or changes it. Phase 2B adds an optional automatic mode with manual override.
+
+There is no "availability" data in Phase 1 other than the away mark. Staff schedules arrive with Appointments in Phase 2B.
+
+### 13.2 Data kept now for Phase 4
+
+Every task stores its **start time and finish time**. This is the only data Phase 4 "Smart assignment" needs, and it costs nothing to keep.
+
+### 13.3 Rules for any future AI
+
+- AI never changes wages, payments or invoices without a manager's confirmation.
+- Any AI that uses customer data needs a privacy review first.
+- Suggestions must show why they were made.
+
+---
+
+## 14. Data model (Prisma)
+
+This is the Phase 1 core, with notes where later phases attach. It is a starting schema for engineering to review, not a final one.
+
+Rules that apply to every model:
+
+- Every business-owned table has `businessId`, indexed.
+- Money fields are `BigInt` in kobo. Serialise them as strings in JSON.
+- History tables (`ActivityEvent`, `Payment`) are append-only.
+- Times are stored in UTC.
+
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum Role {
+  OWNER
+  MANAGER
+  CASHIER
+  WORKER
+  // SUBCONTRACTOR (Phase 2B)
+}
+
+enum OrderStatus {
+  DRAFT
+  CONFIRMED
+  IN_PROGRESS
+  READY
+  COMPLETED   // collected or delivered
+  CANCELLED
+}
+
+enum TaskStatus {
+  ASSIGNED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  NEEDS_REWORK
+  APPROVED
+}
+
+enum Complexity {
+  SIMPLE
+  STANDARD
+  COMPLEX
+}
+
+enum PaymentPlan {
+  FULL_FIRST          // pay in full before work starts
+  PART_THEN_BALANCE   // part now, the rest when the job is done
+  PART_PAYMENTS       // several part payments
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  SUPERSEDED
+}
+
+enum PaymentKind {
+  PAYMENT
+  REFUND
+  REVERSAL
+}
+
+enum PaymentMethod {
+  ONLINE
+  CASH
+  TRANSFER
+}
+
+enum FieldEntity {
+  ORDER_ITEM
+  CUSTOMER
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  DATE
+  PHOTO
+  DROPDOWN
+  MEASUREMENT_SET
+}
+
+enum WageRunStatus {
+  DRAFT
+  PAID
+}
+
+enum WageLineKind {
+  TASK
+  ADJUSTMENT
+}
+
+enum MessageTemplate {
+  ORDER_CONFIRMED
+  INVOICE
+  PAYMENT_RECEIVED
+  STAGE_UPDATE
+  READY
+  PAYMENT_REMINDER
+  STAFF_LOGIN_CODE
+}
+
+enum MessageChannel {
+  WHATSAPP
+  SMS
+}
+
+enum MessageStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  FAILED
+}
+
+// ---------- Tenant and staff ----------
+
+model Business {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique        // subdomain
+  businessType     String   @default("TAILORING")
+  logoUrl          String?
+  brandColors      Json?
+  currency         String   @default("NGN")
+  locale           String   @default("en")
+  timezone         String   @default("Africa/Lagos")
+  defaultPaymentPlan    PaymentPlan @default(PART_THEN_BALANCE)
+  defaultUpfrontPercent Int         @default(50) // starting value [CONFIRM]
+  paymentTermsDays Int      @default(0)    // invoice due date offset
+  bankDetails      Json?                   // shown on invoices
+  wageWeekStart    Int      @default(1)    // 1 = Monday
+  wagePayDay       Int      @default(6)    // 6 = Saturday
+  wageCutoffTime   String   @default("18:00") // local time on payday, starting value
+  createdAt        DateTime @default(now())
+
+  staff        StaffMember[]
+  customers    Customer[]
+  stages       WorkflowStage[]
+  fields       FieldDefinition[]
+  skills       Skill[]
+  payRates     PayRate[]
+  orders       Order[]
+  wageRuns     WageRun[]
+  messages     MessageLog[]
+  events       ActivityEvent[]
+  analytics    AnalyticsEvent[]
+}
+
+model StaffMember {
+  id         String    @id @default(cuid())
+  businessId String
+  business   Business  @relation(fields: [businessId], references: [id])
+  phone      String                     // international format, e.g. +234...
+  name       String
+  role       Role
+  isActive   Boolean   @default(true)
+  awayUntil  DateTime?                  // "away today" mark
+  pinHash    String?
+  createdAt  DateTime  @default(now())
+
+  skills      StaffSkill[]
+  devices     Device[]
+  assignments TaskAssignment[]
+
+  @@unique([businessId, phone])
+  @@index([businessId])
+}
+
+model Device {
+  id            String      @id @default(cuid())
+  staffMemberId String
+  staffMember   StaffMember @relation(fields: [staffMemberId], references: [id])
+  tokenHash     String
+  label         String?
+  createdAt     DateTime    @default(now())
+  lastSeenAt    DateTime?
+  revokedAt     DateTime?
+
+  @@index([staffMemberId])
+}
+
+model OtpCode {
+  id         String    @id @default(cuid())
+  phone      String
+  codeHash   String
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+
+  @@index([phone])
+}
+
+model Skill {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  name       String
+
+  staff StaffSkill[]
+
+  @@unique([businessId, name])
+}
+
+model StaffSkill {
+  staffMemberId String
+  skillId       String
+  staffMember   StaffMember @relation(fields: [staffMemberId], references: [id])
+  skill         Skill       @relation(fields: [skillId], references: [id])
+
+  @@id([staffMemberId, skillId])
+}
+
+// ---------- Workflow configuration ----------
+
+model WorkflowStage {
+  id              String   @id @default(cuid())
+  businessId      String
+  business        Business @relation(fields: [businessId], references: [id])
+  name            String
+  position        Int
+  createsTasks    Boolean  @default(false)
+  needsApproval   Boolean  @default(false)
+  customerVisible Boolean  @default(false)
+  hidden          Boolean  @default(false) // never deleted once in use
+
+  items OrderItem[]
+  tasks Task[]
+
+  @@unique([businessId, position])
+  @@index([businessId])
+}
+
+model FieldDefinition {
+  id         String      @id @default(cuid())
+  businessId String
+  business   Business    @relation(fields: [businessId], references: [id])
+  entity     FieldEntity
+  key        String
+  label      String
+  type       FieldType
+  required   Boolean     @default(false)
+  options    Json?
+  position   Int
+  hidden     Boolean     @default(false) // hide, keep data
+
+  @@unique([businessId, entity, key])
+}
+
+model PayRate {
+  id         String     @id @default(cuid())
+  businessId String
+  business   Business   @relation(fields: [businessId], references: [id])
+  itemType   String
+  complexity Complexity @default(STANDARD) // optional; one rate per piece if unused
+  stageId    String
+  amountKobo BigInt                         // pay per piece
+
+  @@unique([businessId, itemType, complexity, stageId])
+}
+
+// ---------- Customers ----------
+
+model Customer {
+  id               String    @id @default(cuid())
+  businessId       String
+  business         Business  @relation(fields: [businessId], references: [id])
+  name             String
+  phone            String                 // international format
+  address          String?
+  messageConsentAt DateTime?
+  erasedAt         DateTime?                // set when the owner erases the customer; personal data cleared
+  details          Json?                  // customer field values
+  createdAt        DateTime  @default(now())
+
+  measurementSets MeasurementSet[]
+  orders          Order[]
+
+  @@unique([businessId, phone])
+  @@index([businessId])
+}
+
+model MeasurementSet {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  label      String
+  values     Json
+  createdAt  DateTime @default(now())
+}
+
+// ---------- Orders, items, tasks ----------
+
+model Order {
+  id             String      @id @default(cuid())
+  businessId     String
+  business       Business    @relation(fields: [businessId], references: [id])
+  number         Int                        // per-business sequence
+  customerId     String
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  status         OrderStatus @default(DRAFT)
+  dueDate        DateTime
+  paymentPlan     PaymentPlan               // chosen per order; business default pre-fills
+  upfrontKobo     BigInt?                   // amount needed before work starts, null if none
+  startedWithoutUpfrontReason String?
+  trackingToken  String      @unique        // >= 128 bits random
+  cancelReason   String?
+  releaseReason  String?                    // if released with balance owing
+  createdById    String
+  createdAt      DateTime    @default(now())
+
+  items    OrderItem[]
+  invoices Invoice[]
+  payments Payment[]
+
+  @@unique([businessId, number])
+  @@index([businessId, status])
+  @@index([businessId, dueDate])
+}
+
+model OrderItem {
+  id                  String        @id @default(cuid())
+  businessId          String
+  orderId             String
+  order               Order         @relation(fields: [orderId], references: [id])
+  itemType            String
+  complexity          Complexity    @default(STANDARD)
+  quantity            Int           @default(1)
+  priceKobo           BigInt
+  details             Json                     // validated against FieldDefinition
+  measurementSnapshot Json?                    // copied at order confirmation
+  currentStageId      String?
+  currentStage        WorkflowStage? @relation(fields: [currentStageId], references: [id])
+
+  photos Photo[]
+  tasks  Task[]
+
+  @@index([businessId])
+  @@index([orderId])
+}
+
+model Photo {
+  id          String    @id @default(cuid())
+  businessId  String
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id])
+  url         String
+  kind        String                          // FABRIC or REFERENCE
+  createdAt   DateTime  @default(now())
+}
+
+model Task {
+  id             String     @id @default(cuid())
+  businessId     String
+  orderItemId    String
+  orderItem      OrderItem  @relation(fields: [orderItemId], references: [id])
+  stageId        String
+  stage          WorkflowStage @relation(fields: [stageId], references: [id])
+  status         TaskStatus @default(ASSIGNED)
+  holdReason     String?
+  reworkNote     String?
+  reworkCount    Int        @default(0)
+  startedAt      DateTime?                    // kept for Phase 4
+  completedAt    DateTime?                    // server receive time
+  completedAtDevice DateTime?                 // phone clock, for reference
+  approvedAt     DateTime?
+  approvedById   String?
+  autoApproved   Boolean    @default(false)
+  payKobo        BigInt?                      // copied from PayRate at approval
+  createdAt      DateTime   @default(now())
+
+  assignments TaskAssignment[]
+  wageLines   WageLine[]
+
+  @@index([businessId, status])
+  @@index([orderItemId])
+}
+
+model TaskAssignment {
+  id            String      @id @default(cuid())
+  businessId    String
+  taskId        String
+  task          Task        @relation(fields: [taskId], references: [id])
+  staffMemberId String
+  staffMember   StaffMember @relation(fields: [staffMemberId], references: [id])
+  assignedById  String
+  assignedAt    DateTime    @default(now())
+  unassignedAt  DateTime?                     // null = active
+
+  // Phase 1 rule enforced in the app: one active assignment per task.
+  @@index([taskId])
+  @@index([staffMemberId, unassignedAt])
+}
+
+// ---------- Money ----------
+
+model Invoice {
+  id         String        @id @default(cuid())
+  businessId String
+  orderId    String
+  order      Order         @relation(fields: [orderId], references: [id])
+  revision   Int           @default(1)
+  status     InvoiceStatus @default(DRAFT)
+  totalKobo  BigInt
+  dueDate    DateTime
+  lines      Json
+  sentAt     DateTime?
+  createdAt  DateTime      @default(now())
+
+  @@unique([orderId, revision])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  businessId        String
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id])
+  kind              PaymentKind
+  method            PaymentMethod
+  amountKobo        BigInt                       // always positive; kind gives direction
+  providerRef       String?       @unique        // makes webhooks safe to repeat
+  reversesPaymentId String?
+  recordedById      String?                      // null for online
+  note              String?
+  createdAt         DateTime      @default(now())
+
+  // Append-only: no update, no delete in the application.
+  @@index([businessId, orderId])
+}
+
+// ---------- Wages ----------
+
+model WageRun {
+  id              String        @id @default(cuid())
+  businessId      String
+  business        Business      @relation(fields: [businessId], references: [id])
+  periodStart     DateTime      @db.Date
+  periodEnd       DateTime      @db.Date    // any date range
+  status          WageRunStatus @default(DRAFT)
+  markedPaidById  String?
+  markedPaidAt    DateTime?
+
+  lines WageLine[]
+
+  @@unique([businessId, periodStart, periodEnd])
+}
+
+model WageLine {
+  id            String       @id @default(cuid())
+  businessId    String
+  wageRunId     String
+  wageRun       WageRun      @relation(fields: [wageRunId], references: [id])
+  staffMemberId String
+  kind          WageLineKind
+  taskId        String?
+  task          Task?        @relation(fields: [taskId], references: [id])
+  amountKobo    BigInt                          // may be negative for adjustments
+  reason        String?                         // required for ADJUSTMENT
+  createdById   String?
+  createdAt     DateTime     @default(now())
+
+  @@unique([taskId])                      // a task is in only one wage run
+  @@index([wageRunId, staffMemberId])
+}
+
+// ---------- History, messages, measurement ----------
+
+model ActivityEvent {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id])
+  orderId     String?
+  entityType  String
+  entityId    String
+  type        String                            // e.g. TASK_STATUS_CHANGED
+  actorId     String?
+  data        Json
+  deviceTime  DateTime?
+  createdAt   DateTime @default(now())          // server time
+
+  // Append-only: no update, no delete in the application.
+  @@index([businessId, orderId, createdAt])
+}
+
+model MessageLog {
+  id          String          @id @default(cuid())
+  businessId  String
+  business    Business        @relation(fields: [businessId], references: [id])
+  orderId     String?
+  customerId  String?
+  template    MessageTemplate
+  channel     MessageChannel
+  status      MessageStatus   @default(QUEUED)
+  providerRef String?
+  error       String?
+  createdAt   DateTime        @default(now())
+
+  @@index([businessId, orderId])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+  name       String                             // e.g. SETUP_STARTED, FIRST_ORDER_SAVED
+  actorId    String?
+  props      Json?
+  createdAt  DateTime @default(now())
+
+  @@index([businessId, name, createdAt])
+}
+
+// ---------- Added in later phases (not built in Phase 1) ----------
+// Phase 1 (Paga, after legal/Paga confirmation): PagaBalance, PayoutBatch, PayoutLine, AutoSweepSchedule
+// Phase 1: LandingPage (business public page, see §5.5)
+// Phase 2A: Plan, Subscription
+// Phase 2B: Appointment, StaffSchedule, Domain, CustomerAccount
+// Phase 2C: Material, StockMovement, Expense
+// Phase 3: Supplier, Connection, PurchaseRequest, DeliveryRequest, Equipment
+// Phase 3 (extended wallet): WalletTransaction (commission), wallet billing
+```
+
+**Reasons for the main choices**
+
+| Choice | Reason |
+| --- | --- |
+| Stages and fields stored as rows | Phase 2 changes workflows without a data migration. |
+| `OrderItem.measurementSnapshot` | Past orders keep the measurements they were made with. |
+| `Task.payKobo` copied at approval | A later rate change never rewrites past pay. |
+| `TaskAssignment` as its own table | One assignee now, many later, with a full history. |
+| `Payment.providerRef` unique | A repeated provider webhook cannot record twice. |
+| `Invoice.revision` | A sent invoice is locked; changes create a new revision. |
+| `Customer` unique on business and phone | Customers belong to one business; the phone format allows matching later. |
+
+---
+
+## 15. Business model
+
+**Model.** A monthly subscription based on plan tiers (staff numbers and feature access), plus a **commission on staff payouts** made through the wallet (rate **[CONFIRM]**). Customers do not pay through the platform, so there is no fee on customer payments.
+
+**Phase 1.** Pilots pay nothing. Staff payouts run through Paga (see §5.6). Subscription billing starts in Phase 2A. The payout commission starts in Phase 3.
+
+**Unknowns that must be resolved before prices are set**
+
+| Item | What we need |
+| --- | --- |
+| Cost per order | WhatsApp messages (up to six per order), photo storage, SMS login codes. Produce a **cost-per-order sheet** from pilot data. |
+| Wallet and fees | Paga's fees are included in the amount charged. Decide how the commission and Paga's fees are shown to the owner before they confirm a payout. Confirm Paga's exact limits, fees, and Sunday payout timing before build. |
+| Plan tiers | Tiers must fit the market. Phase 1 targets 3 to 20 staff, so a plan allowing only 5 staff would price out most of the target. Starting placeholder: a plan allowing 10 staff. |
+| Willingness to pay | At least 2 of 3 pilot owners name a monthly price they would pay (§16.1, measure 8). |
+| Margin check | Subscription plus payout commission must exceed cost per order for a typical business. |
+
+---
+
+## 16. Success metrics and gates
+
+All targets below are **starting values [CONFIRM]**. Every one is measured by a recorded event (§12.7) or an observed session, never by self-report alone.
+
+### 16.1 Gate 1: end of Phase 1
+
+Measured across three pilot businesses, with S.I.G as the first.
+
+| # | Measure | Target |
+| --- | --- | --- |
+| 1 | Setup time | Median 60 minutes or less from sign-up to first saved order, observed in 3 businesses |
+| 2 | Worker autonomy | At least 90% of task status changes in a week are made by the assigned worker themselves |
+| 3 | Customer messages | At least 90% of "ready" WhatsApp messages show as delivered |
+| 4 | Dashboard accuracy | Late orders and unpaid balances match the owner's own check every week for 4 weeks |
+| 5 | Wage accuracy | Wage run totals differ from the owner's own count by under 2% for 4 straight weeks |
+| 6 | Daily use | At least 80% of new orders are entered on the platform for 8 weeks |
+| 7 | Fewer status calls | "Is it ready?" calls and messages fall by half against a baseline measured in week 0 |
+| 8 | Willingness to pay | At least 2 of 3 pilot owners name a monthly price they would pay |
+
+### 16.2 Gate 2: end of Phase 2
+
+- At least 3 businesses of each of 3 new types complete setup without our team building anything custom, and run for 30 days.
+- At least **[N]** of them pay a subscription.
+
+### 16.3 Gate 3: end of Phase 3
+
+- Staff are paid through the platform with no cash counting for 4 straight weeks in at least **[N]** businesses.
+- A pilot tailor orders fabric from at least **[N]** of their own existing suppliers who joined the platform, and pays there.
+
+---
+
+## 17. Risks
+
+| # | Risk | Likelihood | Impact | Mitigation | Owner |
+| --- | --- | --- | --- | --- | --- |
+| 1 | WhatsApp template approval is late or refused | Medium | High | Submit templates before design ends. Copy-link fallback. SMS for login codes. | Product |
+| 2 | The business wallet (holding owners' money) is regulated | Medium | High | Legal review before any wallet build and before Phase 3 payroll. No customer online payments in Phase 1. | Legal |
+| 3 | Offline sync conflicts corrupt task or wage data | Medium | High | Held-update rule. Server receive time for wages. Allowed-moves table. | Engineering |
+| 4 | Phase 1 scope too large for the team | High | High | Inventory moved out. Reports trimmed. Priority A first. | Product |
+| 5 | One pilot business gives false confidence | High | Medium | Gate judged on three pilots. | Product |
+| 6 | Customer data exposure (tracking link or tenant leak) | Low | High | Unguessable tokens. Row-level security. Permissions checked on the server. | Engineering |
+| 7 | Workers do not adopt the app (language, literacy, phone limits) | Medium | High | Language survey. Two-tap task access. Test on low-end Android. | Design |
+| 8 | Manager records false cash payments | Medium | Medium | Append-only payments. Owner visibility. Reversal entries only. | Product |
+| 9 | Cost per order exceeds what businesses will pay | Medium | High | Cost-per-order sheet. Willingness-to-pay test at Gate 1. | Product |
+| 10 | Wage disputes from unclear rules | Medium | High | Written wage rules (§5.3). Adjustment lines. Worker earnings screen. | Product |
+| 11 | Wallet provider outage or webhook failure (once the wallet is built) | Low | High | Safe repeated webhooks. Nightly reconciliation. | Engineering |
+| 12 | Phase 2 is too large | High | Medium | Split into 2A, 2B, 2C with a gate. | Product |
+| 13 | Supplier network has no suppliers at launch | High | Medium | Invite the pilot tailors' own suppliers. Payroll first. | Product |
+| 14 | Personal data rules not met (measurements, photos, messages) | Medium | High | Consent at order creation. Retention confirmed by a lawyer. | Legal |
+| 15 | Low-end phones are too slow | Medium | Medium | Performance numbers in §4.2. Test on S.I.G's real phones. | Engineering |
+| 16 | Payouts are delayed over Sundays or holidays | Medium | Medium | Show the expected arrival time. Warn before a Sunday payout. Confirm timing with Paystack. | Product |
+
+---
+
+## 18. Assumptions
+
+Every assumption below is open to being wrong. Each has a way to test it.
+
+| # | Assumption | How we test it |
+| --- | --- | --- |
+| 1 | Tailors lose orders and argue about pay often enough to pay for a fix | Interviews and week-0 baseline (§1.2) |
+| 2 | Workers can use a web app on their own phones | Test on S.I.G's real phones |
+| 3 | Workers can read English well enough at launch (S.I.G confirmed English only) | Prototype test with S.I.G workers |
+| 4 | Customers will open WhatsApp tracking links and stop calling to ask for status | Measures 3 and 7 |
+| 5 | Managers will keep orders up to date on the platform | Measure 6 |
+| 6 | Staff are paid per piece of approved work, on a weekly or custom pay period (confirmed by S.I.G) | Wage accuracy, measure 5 |
+| 7 | One worker does one task | Question 5 in §11.2 |
+| 8 | Business owners will fund a wallet to pay staff and pay their subscription, and we can offer it legally | Pilot feedback and the legal review (§11.2, question 14) |
+| 9 | One shared WhatsApp number is acceptable to businesses | Pilot feedback |
+| 10 | Farms and shoe makers sell by customer order, so they fit the stage model | Gate 2 |
+| 11 | A business with 3 to 20 staff will accept a subscription plus a small fee | Measure 8 |
+| 12 | Phones in the workshop reconnect often enough for offline sync to work | Offline sync logs in the pilot |
+
+---
+
+## 19. Reference
+
+- S.I.G Clothing Company proposal: **[attach]**
+- Interview notes and week-0 baseline: **[attach]**
+- WhatsApp template submissions: **[link when submitted]**
+- Payment provider decision and legal opinion: **[link when complete]**
