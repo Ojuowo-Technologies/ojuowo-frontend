@@ -98,7 +98,7 @@ export default function VerifyPage() {
 
   return (
     <AuthCard step={2}>
-      <div style={{ marginBottom: '32px' }}>
+      <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <h1
           style={{
             fontFamily: 'var(--font-display)',
@@ -110,7 +110,7 @@ export default function VerifyPage() {
             marginBottom: '8px',
           }}
         >
-          Check your phone
+          Check Your Phone
         </h1>
         <p
           style={{
@@ -135,15 +135,15 @@ export default function VerifyPage() {
           disabled={loading || locked}
         >
           <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
+            <InputOTPSlot index={0} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
+            <InputOTPSlot index={1} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
+            <InputOTPSlot index={2} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
           </InputOTPGroup>
           <InputOTPSeparator />
           <InputOTPGroup>
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
+            <InputOTPSlot index={3} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
+            <InputOTPSlot index={4} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
+            <InputOTPSlot index={5} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
           </InputOTPGroup>
         </InputOTP>
       </div>

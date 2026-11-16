@@ -93,7 +93,7 @@ export default function PinPage() {
 
   return (
     <AuthCard step={3}>
-      <div style={{ marginBottom: '28px' }}>
+      <div style={{ marginBottom: '28px', textAlign: 'center' }}>
         <h1
           style={{
             fontFamily: 'var(--font-display)',
@@ -105,7 +105,7 @@ export default function PinPage() {
             marginBottom: '8px',
           }}
         >
-          Set your PIN
+          Set Your PIN
         </h1>
         <p
           style={{
