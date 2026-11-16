@@ -3,15 +3,22 @@ import { cn } from '@/lib/utils'
 
 function StepBar({ step }: { step: 1 | 2 | 3 }) {
   return (
-    <div className="flex items-center gap-1.5 mb-8" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={3} aria-label={`Step ${step} of 3`}>
+    <div
+      className="flex items-center gap-1.5"
+      style={{ marginBottom: '32px' }}
+      role="progressbar"
+      aria-valuenow={step}
+      aria-valuemin={1}
+      aria-valuemax={3}
+      aria-label={`Step ${step} of 3`}
+    >
       {([1, 2, 3] as const).map((s) => (
         <div
           key={s}
           className={cn(
-            'h-[3px] rounded-full transition-all duration-500',
+            'h-[3px] flex-1 rounded-full transition-colors duration-500',
             s <= step ? 'bg-[#5B4CF5]' : 'bg-[#DDD8FF]',
           )}
-          style={{ flex: s <= step ? 2 : 1 }}
         />
       ))}
     </div>

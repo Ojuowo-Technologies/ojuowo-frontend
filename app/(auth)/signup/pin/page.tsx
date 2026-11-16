@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { AuthCard } from '@/components/auth/auth-card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { setPin as savePin } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
@@ -27,7 +26,6 @@ const labelStyle: React.CSSProperties = {
 
 const pinInputStyle: React.CSSProperties = {
   fontFamily: 'var(--font-jakarta)',
-  height: '52px',
   fontSize: '1.4rem',
   textAlign: 'center',
   letterSpacing: '0.4em',
@@ -121,7 +119,7 @@ export default function PinPage() {
         </p>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div className="space-y-5">
         <div>
           <label style={labelStyle}>PIN</label>
           <Input
@@ -133,6 +131,7 @@ export default function PinPage() {
             onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="••••••"
             disabled={loading}
+            className="h-12 px-4"
             style={pinInputStyle}
             autoComplete="new-password"
           />
@@ -149,19 +148,27 @@ export default function PinPage() {
             onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="••••••"
             disabled={loading}
+            className="h-12 px-4"
             style={pinInputStyle}
             autoComplete="new-password"
           />
         </div>
 
         {error && (
-          <Alert variant="destructive">
-            <AlertDescription
-              style={{ fontFamily: 'var(--font-jakarta)', fontSize: '0.88rem' }}
-            >
-              {error}
-            </AlertDescription>
-          </Alert>
+          <div
+            role="alert"
+            style={{
+              background: '#FFF1F2',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              fontFamily: 'var(--font-jakarta)',
+              fontSize: '0.88rem',
+              color: '#C0152A',
+              lineHeight: 1.5,
+            }}
+          >
+            {error}
+          </div>
         )}
 
         <Button

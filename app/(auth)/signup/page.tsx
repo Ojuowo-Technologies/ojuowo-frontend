@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { signUp } from '@/lib/api/auth'
 import type { ApiError } from '@/lib/types/auth'
 
@@ -35,7 +34,6 @@ type FormValues = z.infer<typeof schema>
 
 const inputStyle = {
   fontFamily: 'var(--font-jakarta)',
-  height: '48px',
   fontSize: '0.95rem',
 }
 
@@ -65,6 +63,10 @@ export default function SignupPage() {
       )
       router.push('/signup/verify')
     } catch (err) {
+      if (err instanceof TypeError) {
+        setServerError('Could not reach the server. Check your internet connection and try again.')
+        return
+      }
       const e = err as ApiError
       if (e.code === 'PHONE_TAKEN') {
         form.setError('phone', {
@@ -79,6 +81,11 @@ export default function SignupPage() {
   }
 
   const isSubmitting = form.formState.isSubmitting
+  const watched = form.watch()
+  const hasAllValues =
+    watched.name.trim().length > 0 &&
+    watched.email.trim().length > 0 &&
+    watched.phone.trim().length > 0
 
   return (
     <AuthCard step={1}>
@@ -109,7 +116,7 @@ export default function SignupPage() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="name"
@@ -120,6 +127,7 @@ export default function SignupPage() {
                   <Input
                     placeholder="Amaka Johnson"
                     disabled={isSubmitting}
+                    className="h-12 px-4"
                     style={inputStyle}
                     {...field}
                   />
@@ -140,6 +148,7 @@ export default function SignupPage() {
                     type="email"
                     placeholder="amaka@example.com"
                     disabled={isSubmitting}
+                    className="h-12 px-4"
                     style={inputStyle}
                     {...field}
                   />
@@ -160,6 +169,7 @@ export default function SignupPage() {
                     type="tel"
                     placeholder="08012345678"
                     disabled={isSubmitting}
+                    className="h-12 px-4"
                     style={inputStyle}
                     {...field}
                   />
@@ -170,18 +180,25 @@ export default function SignupPage() {
           />
 
           {serverError && (
-            <Alert variant="destructive">
-              <AlertDescription
-                style={{ fontFamily: 'var(--font-jakarta)', fontSize: '0.88rem' }}
-              >
-                {serverError}
-              </AlertDescription>
-            </Alert>
+            <div
+              role="alert"
+              style={{
+                background: '#FFF1F2',
+                borderRadius: '10px',
+                padding: '12px 16px',
+                fontFamily: 'var(--font-jakarta)',
+                fontSize: '0.88rem',
+                color: '#C0152A',
+                lineHeight: 1.5,
+              }}
+            >
+              {serverError}
+            </div>
           )}
 
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={!hasAllValues || isSubmitting}
             className="w-full rounded-full"
             style={{
               height: '50px',

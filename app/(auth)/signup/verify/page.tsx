@@ -10,7 +10,6 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from '@/components/ui/input-otp'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { verifyOtp, resendOtp } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
@@ -150,13 +149,21 @@ export default function VerifyPage() {
       </div>
 
       {error && (
-        <Alert variant="destructive" style={{ marginBottom: '20px' }}>
-          <AlertDescription
-            style={{ fontFamily: 'var(--font-jakarta)', fontSize: '0.88rem' }}
-          >
-            {error}
-          </AlertDescription>
-        </Alert>
+        <div
+          role="alert"
+          style={{
+            background: '#FFF1F2',
+            borderRadius: '10px',
+            padding: '12px 16px',
+            marginBottom: '20px',
+            fontFamily: 'var(--font-jakarta)',
+            fontSize: '0.88rem',
+            color: '#C0152A',
+            lineHeight: 1.5,
+          }}
+        >
+          {error}
+        </div>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
