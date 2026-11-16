@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/input-otp'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { BackButton } from '@/components/auth/back-button'
 import { verifyOtp, resendOtp } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
@@ -101,7 +100,6 @@ export default function VerifyPage() {
 
   return (
     <>
-      <BackButton href="/signup" label="Back" />
       <AuthCard step={2}>
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <h1
@@ -144,7 +142,7 @@ export default function VerifyPage() {
             <InputOTPSlot index={1} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
             <InputOTPSlot index={2} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
           </InputOTPGroup>
-          <InputOTPSeparator />
+          <InputOTPSeparator style={{ color: '#CCC' }} />
           <InputOTPGroup>
             <InputOTPSlot index={3} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
             <InputOTPSlot index={4} style={{ width: 48, height: 48, fontSize: '1.15rem' }} />
@@ -198,12 +196,13 @@ export default function VerifyPage() {
           className={cn(buttonVariants({ variant: 'outline' }), 'rounded-full')}
           style={{
             fontFamily: 'var(--font-jakarta)',
-            fontWeight: 600,
+            fontWeight: 500,
             fontSize: '0.88rem',
             height: '40px',
             paddingLeft: '20px',
             paddingRight: '20px',
             textDecoration: 'none',
+            color: '#999',
           }}
         >
           Wrong number? Go back

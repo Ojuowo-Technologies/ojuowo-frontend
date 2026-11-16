@@ -1,8 +1,10 @@
 import { Toaster } from '@/components/ui/sonner'
+import { AuthNav } from '@/components/auth/auth-nav'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <AuthNav />
       <div
         style={{
           minHeight: '100vh',
@@ -11,7 +13,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '24px 16px',
+          padding: '88px 16px 32px',
           position: 'relative',
         }}
       >
