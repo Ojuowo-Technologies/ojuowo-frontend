@@ -34,7 +34,7 @@ export function AuthCard({
 }) {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
+      <div className="auth-logo-mobile" style={{ justifyContent: 'center', marginBottom: '28px' }}>
         <a href="/" aria-label="Go to Ojuowo home" style={{ display: 'inline-flex', textDecoration: 'none' }}>
           <Logo variant="light" />
         </a>

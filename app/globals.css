@@ -99,6 +99,19 @@ body {
 .auth-form-side {
   padding: 40px 24px;
 }
+
+/* Logo visible only on mobile (brand panel hidden) */
+.auth-logo-mobile { display: flex; }
+@media (min-width: 768px) { .auth-logo-mobile { display: none; } }
+
+/* Orbiting glow for auth brand panel */
+@keyframes glow-orbit {
+  0%   { transform: translate(-50%, -50%) rotate(0deg)   translateX(100px) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg); }
+}
+.auth-glow-orbit {
+  animation: glow-orbit 12s linear infinite;
+}
 @media (min-width: 768px) {
   .auth-form-side {
     padding: 56px 48px;

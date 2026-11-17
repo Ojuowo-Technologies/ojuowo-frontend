@@ -14,14 +14,31 @@ export function AuthBrandPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* Ambient radial glow */}
+      {/* Static ambient glow */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(ellipse 85% 60% at 38% 55%, rgba(91,76,245,0.28) 0%, transparent 70%)',
+            'radial-gradient(ellipse 85% 60% at 38% 55%, rgba(91,76,245,0.18) 0%, transparent 70%)',
           pointerEvents: 'none',
+        }}
+      />
+
+      {/* Orbiting glow orb */}
+      <div
+        className="auth-glow-orbit"
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '340px',
+          height: '340px',
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(91,76,245,0.32) 0%, rgba(155,138,255,0.14) 45%, transparent 70%)',
+          pointerEvents: 'none',
+          willChange: 'transform',
         }}
       />
 
@@ -116,9 +133,9 @@ export function AuthBrandPanel() {
             margin: 0,
           }}
         >
-          Every order.<br />
-          Every stitch.<br />
-          Every payout.
+          Every Order.<br />
+          Every Task.<br />
+          Every Payout.
         </h2>
         <p
           style={{
@@ -127,10 +144,10 @@ export function AuthBrandPanel() {
             color: 'rgba(196,185,255,0.75)',
             lineHeight: 1.65,
             marginTop: '14px',
-            maxWidth: '280px',
+            maxWidth: '300px',
           }}
         >
-          One place to manage your craft business, from intake to invoice.
+          One place to run your business. Take orders, track your team, send invoices, and get paid without the back-and-forth.
         </p>
       </div>
 
