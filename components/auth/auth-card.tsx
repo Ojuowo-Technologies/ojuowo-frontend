@@ -33,19 +33,10 @@ export function AuthCard({
   step: 1 | 2 | 3
 }) {
   return (
-    <div
-      style={{
-        background: '#FFFFFF',
-        borderRadius: '24px',
-        boxShadow:
-          '0 1px 3px rgba(0,0,0,0.04), 0 20px 60px rgba(91,76,245,0.09), 0 0 0 1px rgba(91,76,245,0.06)',
-        padding: '40px',
-        width: '100%',
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
         <a href="/" aria-label="Go to Ojuowo home" style={{ display: 'inline-flex', textDecoration: 'none' }}>
-          <Logo />
+          <Logo variant="light" />
         </a>
       </div>
       <StepBar step={step} />

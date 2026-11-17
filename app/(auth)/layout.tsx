@@ -1,36 +1,31 @@
 import { Toaster } from '@/components/ui/sonner'
+import { AuthBrandPanel } from '@/components/auth/auth-brand-panel'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#F0F0F4',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '32px 16px',
-          position: 'relative',
-        }}
-      >
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        {/* Left brand panel — hidden on mobile via CSS class in globals.css */}
+        <div className="auth-brand-side">
+          <AuthBrandPanel />
+        </div>
+
+        {/* Right form panel */}
         <div
-          className="dot-grid"
-          style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}
-        />
-        <div
+          className="auth-form-side"
           style={{
-            position: 'fixed',
-            inset: 0,
-            background:
-              'radial-gradient(ellipse 70% 60% at 50% 40%, rgba(240,240,244,0.5) 0%, transparent 100%)',
-            pointerEvents: 'none',
-            zIndex: 1,
+            flex: 1,
+            background: '#FFFFFF',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
           }}
-        />
-        <div style={{ position: 'relative', zIndex: 2, width: '100%', maxWidth: '460px' }}>
-          {children}
+        >
+          <div style={{ width: '100%', maxWidth: '460px' }}>
+            {children}
+          </div>
         </div>
       </div>
       <Toaster position="top-center" />

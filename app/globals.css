@@ -84,6 +84,27 @@ body {
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* Auth split layout */
+.auth-brand-side {
+  display: none;
+  flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .auth-brand-side {
+    display: flex;
+    width: 44%;
+    min-height: 100vh;
+  }
+}
+.auth-form-side {
+  padding: 40px 24px;
+}
+@media (min-width: 768px) {
+  .auth-form-side {
+    padding: 56px 48px;
+  }
+}
+
 .float-a { animation: float-a 6s ease-in-out infinite; }
 .float-b { animation: float-b 7s ease-in-out infinite; animation-delay: -1.5s; }
 .float-c { animation: float-c 5.5s ease-in-out infinite; animation-delay: -3s; }
