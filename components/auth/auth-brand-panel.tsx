@@ -14,7 +14,7 @@ export function AuthBrandPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* Radial glow */}
+      {/* Ambient radial glow */}
       <div
         style={{
           position: 'absolute',
@@ -25,39 +25,76 @@ export function AuthBrandPanel() {
         }}
       />
 
-      {/* Top: logo + beta badge */}
+      {/* Abstract blob shapes */}
+      <svg
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+        }}
+        viewBox="0 0 440 900"
+        preserveAspectRatio="xMidYMid slice"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Large ambient blob — lower left */}
+        <path
+          d="M-60 580 C20 500, 160 480, 220 560 C280 640, 240 760, 140 800 C40 840, -80 760, -100 680 C-120 600, -140 660, -60 580Z"
+          fill="rgba(91,76,245,0.22)"
+          style={{ filter: 'blur(32px)' }}
+        />
+        {/* Medium blob — upper right */}
+        <path
+          d="M300 60 C380 40, 460 100, 450 200 C440 300, 360 320, 280 280 C200 240, 180 160, 220 100 C260 40, 220 80, 300 60Z"
+          fill="rgba(155,138,255,0.18)"
+          style={{ filter: 'blur(28px)' }}
+        />
+        {/* Small accent blob — center */}
+        <path
+          d="M180 340 C230 300, 300 320, 310 390 C320 460, 260 500, 200 480 C140 460, 120 400, 180 340Z"
+          fill="rgba(190,160,255,0.12)"
+          style={{ filter: 'blur(20px)' }}
+        />
+        {/* Thin ring accent — top left area */}
+        <circle
+          cx="80"
+          cy="180"
+          r="90"
+          fill="none"
+          stroke="rgba(91,76,245,0.18)"
+          strokeWidth="1.5"
+        />
+        {/* Smaller ring — lower right */}
+        <circle
+          cx="370"
+          cy="680"
+          r="60"
+          fill="none"
+          stroke="rgba(155,138,255,0.14)"
+          strokeWidth="1"
+        />
+        {/* Dot cluster — mid right */}
+        <circle cx="390" cy="400" r="4" fill="rgba(155,138,255,0.35)" />
+        <circle cx="406" cy="420" r="2.5" fill="rgba(155,138,255,0.25)" />
+        <circle cx="378" cy="430" r="2" fill="rgba(155,138,255,0.2)" />
+      </svg>
+
+      {/* Top: logo */}
       <div
         style={{
           position: 'relative',
           zIndex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
           marginBottom: '48px',
         }}
       >
         <a href="/" style={{ display: 'inline-flex', textDecoration: 'none' }}>
-          <Logo variant="default" />
+          <Logo variant="light" />
         </a>
-        <span
-          style={{
-            background: 'rgba(91,76,245,0.28)',
-            color: '#C4B9FF',
-            fontFamily: 'var(--font-jakarta)',
-            fontSize: '0.68rem',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            padding: '4px 10px',
-            borderRadius: '999px',
-            border: '1px solid rgba(91,76,245,0.4)',
-          }}
-        >
-          Beta
-        </span>
       </div>
 
-      {/* Middle: headline + floating cards */}
+      {/* Middle: headline */}
       <div
         style={{
           position: 'relative',
@@ -65,296 +102,36 @@ export function AuthBrandPanel() {
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
-        {/* Headline */}
-        <div style={{ marginBottom: '28px' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1.75rem, 2.6vw, 2.4rem)',
-              fontWeight: 800,
-              color: '#FFFFFF',
-              lineHeight: 1.15,
-              letterSpacing: '-0.03em',
-              margin: 0,
-            }}
-          >
-            Every order.<br />
-            Every stitch.<br />
-            Every payout.
-          </h2>
-          <p
-            style={{
-              fontFamily: 'var(--font-jakarta)',
-              fontSize: '0.92rem',
-              color: 'rgba(196,185,255,0.75)',
-              lineHeight: 1.65,
-              marginTop: '14px',
-              maxWidth: '280px',
-            }}
-          >
-            One place to manage your craft business — from intake to invoice.
-          </p>
-        </div>
-
-        {/* Floating cards stage */}
-        <div style={{ position: 'relative', flex: 1, minHeight: '280px' }}>
-
-          {/* Card 1: Order card */}
-          <div
-            className="float-b"
-            style={{
-              position: 'absolute',
-              top: '14%',
-              left: '0',
-              width: '238px',
-              background: 'rgba(255,255,255,0.97)',
-              borderRadius: '16px',
-              padding: '16px',
-              boxShadow: '0 24px 64px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08)',
-              transform: 'rotate(-2.5deg)',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '7px',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.68rem',
-                  fontWeight: 600,
-                  color: '#AAA',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Order #0042
-              </span>
-              <span
-                style={{
-                  background: '#FFF7ED',
-                  color: '#B45309',
-                  fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  padding: '3px 9px',
-                  borderRadius: '999px',
-                }}
-              >
-                In Progress
-              </span>
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                color: '#0D0D0D',
-                marginBottom: '10px',
-              }}
-            >
-              Ade&apos;s Wedding Suit
-            </div>
-            <div
-              style={{ height: '1px', background: '#F0F0F5', marginBottom: '10px' }}
-            />
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.75rem',
-                  color: '#AAA',
-                }}
-              >
-                Due Dec 24
-              </span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.95rem',
-                  fontWeight: 700,
-                  color: '#5B4CF5',
-                }}
-              >
-                ₦85,000
-              </span>
-            </div>
-          </div>
-
-          {/* Card 2: Task card */}
-          <div
-            className="float-a"
-            style={{
-              position: 'absolute',
-              top: '0',
-              right: '0',
-              width: '196px',
-              background: 'rgba(255,255,255,0.95)',
-              borderRadius: '14px',
-              padding: '14px',
-              boxShadow: '0 16px 48px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08)',
-              transform: 'rotate(3.5deg)',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '9px',
-              }}
-            >
-              <div
-                style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #5B4CF5, #9B8AFF)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: 'var(--font-jakarta)',
-                    fontSize: '0.6rem',
-                    fontWeight: 700,
-                    color: '#fff',
-                  }}
-                >
-                  EO
-                </span>
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-jakarta)',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    color: '#0D0D0D',
-                    lineHeight: 1.2,
-                  }}
-                >
-                  Emeka Okafor
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'var(--font-jakarta)',
-                    fontSize: '0.65rem',
-                    color: '#AAA',
-                  }}
-                >
-                  Tailor
-                </div>
-              </div>
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                color: '#1A1140',
-                marginBottom: '9px',
-              }}
-            >
-              Cut &amp; Sew Jacket
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.68rem',
-                  color: '#BBB',
-                }}
-              >
-                Due Fri
-              </span>
-              <span
-                style={{
-                  background: '#ECFDF5',
-                  color: '#059669',
-                  fontFamily: 'var(--font-jakarta)',
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  padding: '3px 9px',
-                  borderRadius: '999px',
-                }}
-              >
-                ✓ Done
-              </span>
-            </div>
-          </div>
-
-          {/* Card 3: Payment chip */}
-          <div
-            className="float-c"
-            style={{
-              position: 'absolute',
-              bottom: '8%',
-              left: '8%',
-              background: '#ECFDF5',
-              border: '1px solid rgba(5,150,105,0.2)',
-              borderRadius: '999px',
-              padding: '10px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 8px 28px rgba(0,0,0,0.18)',
-              transform: 'rotate(-1.5deg)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#059669',
-                flexShrink: 0,
-                display: 'inline-block',
-              }}
-            />
-            <span
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                color: '#065F46',
-              }}
-            >
-              ₦45,000 received
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.75rem',
-                color: '#6EE7B7',
-              }}
-            >
-              just now
-            </span>
-          </div>
-        </div>
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.75rem, 2.6vw, 2.4rem)',
+            fontWeight: 800,
+            color: '#FFFFFF',
+            lineHeight: 1.15,
+            letterSpacing: '-0.03em',
+            margin: 0,
+          }}
+        >
+          Every order.<br />
+          Every stitch.<br />
+          Every payout.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-jakarta)',
+            fontSize: '0.92rem',
+            color: 'rgba(196,185,255,0.75)',
+            lineHeight: 1.65,
+            marginTop: '14px',
+            maxWidth: '280px',
+          }}
+        >
+          One place to manage your craft business, from intake to invoice.
+        </p>
       </div>
 
       {/* Bottom: testimonial */}
