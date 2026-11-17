@@ -34,7 +34,7 @@ const schema = z
   .object({
     name: z.string().min(2, 'Enter your full name'),
     email: z.string().email('Enter a valid email address'),
-    phone: z.string().regex(/^0?[789][01]\d{8}$/, 'Enter a valid phone number'),
+    phone: z.string().regex(/^[789][01]\d{8}$/, 'Enter a valid Nigerian phone number'),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
@@ -215,6 +215,10 @@ export default function SignupPage() {
                         disabled={isSubmitting}
                         style={{ ...inputStyle, paddingLeft: '100px' }}
                         {...field}
+                        onChange={(e) => {
+                          const stripped = e.target.value.replace(/\D/g, '').replace(/^0+/, '')
+                          field.onChange(stripped)
+                        }}
                       />
                     </div>
                   </FormControl>
