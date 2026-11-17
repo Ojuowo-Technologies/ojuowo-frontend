@@ -114,6 +114,13 @@ body {
   75%  { transform: translate(-8%,   58%); }
   100% { transform: translate(28%,  -45%); }
 }
+
+/* Testimonial carousel slide-in */
+@keyframes auth-testimonial-in {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.auth-testimonial-in { animation: auth-testimonial-in 0.4s ease both; }
 @media (min-width: 768px) {
   .auth-form-side {
     padding: 56px 48px;

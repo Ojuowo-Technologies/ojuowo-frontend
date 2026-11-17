@@ -1,4 +1,5 @@
 import { Logo } from '@/components/ui/logo'
+import { AuthTestimonialCarousel } from '@/components/auth/auth-testimonial-carousel'
 
 export function AuthBrandPanel() {
   return (
@@ -20,17 +21,17 @@ export function AuthBrandPanel() {
       <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <div style={{
           position: 'absolute',
-          width: '500px', height: '420px', borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(195,175,255,0.42) 0%, rgba(150,125,255,0.18) 45%, transparent 70%)',
-          filter: 'blur(72px)',
+          width: '680px', height: '580px', borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(155,135,255,0.11) 0%, rgba(110,90,220,0.05) 50%, transparent 70%)',
+          filter: 'blur(90px)',
           animation: 'authBrandBlob 14s ease-in-out infinite',
           willChange: 'transform',
         }} />
         <div style={{
           position: 'absolute',
-          width: '400px', height: '340px', borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(218,205,255,0.34) 0%, rgba(170,150,255,0.15) 50%, transparent 70%)',
-          filter: 'blur(88px)',
+          width: '560px', height: '480px', borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(175,158,255,0.09) 0%, rgba(130,110,240,0.04) 55%, transparent 70%)',
+          filter: 'blur(100px)',
           animation: 'authBrandBlob 14s ease-in-out infinite',
           animationDelay: '-7s',
           willChange: 'transform',
@@ -90,74 +91,9 @@ export function AuthBrandPanel() {
         </p>
       </div>
 
-      {/* Bottom: testimonial */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          marginTop: '32px',
-          paddingTop: '24px',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-        }}
-      >
-        <p
-          style={{
-            fontFamily: 'var(--font-jakarta)',
-            fontSize: '0.88rem',
-            color: 'rgba(255,255,255,0.72)',
-            lineHeight: 1.65,
-            fontStyle: 'italic',
-            marginBottom: '14px',
-          }}
-        >
-          &ldquo;Running three orders at once felt impossible until Ojuowo.&rdquo;
-        </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #5B4CF5, #9B8AFF)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                color: '#fff',
-              }}
-            >
-              TA
-            </span>
-          </div>
-          <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                color: 'rgba(255,255,255,0.88)',
-              }}
-            >
-              Taiwo Adeyemi
-            </div>
-            <div
-              style={{
-                fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.72rem',
-                color: 'rgba(196,185,255,0.65)',
-              }}
-            >
-              Bespoke Tailor, Lagos
-            </div>
-          </div>
-        </div>
+      {/* Bottom: rotating industry testimonials */}
+      <div style={{ position: 'relative', zIndex: 1, marginTop: '32px' }}>
+        <AuthTestimonialCarousel />
       </div>
     </div>
   )
