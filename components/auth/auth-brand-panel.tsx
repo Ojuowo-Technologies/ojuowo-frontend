@@ -14,25 +14,25 @@ export function AuthBrandPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* Two aurora blobs — top-right and bottom-left, same motion as CTA card */}
+      {/* Two aurora blobs — exact same technique as CTA wlAurora1.
+          Both start at top:0 left:0; keyframe translates drive positions.
+          Blob 2 offset by -7s (half of 14s) so it starts at the 50% waypoint = bottom-left. */}
       <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        {/* Blob 1 — top-right anchor */}
         <div style={{
-          position: 'absolute', top: '-10%', right: '-15%',
-          width: '380px', height: '320px', borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(91,76,245,0.22) 0%, rgba(155,138,255,0.09) 45%, transparent 70%)',
+          position: 'absolute',
+          width: '500px', height: '420px', borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(195,175,255,0.42) 0%, rgba(150,125,255,0.18) 45%, transparent 70%)',
           filter: 'blur(72px)',
-          animation: 'authBrandBlob 16s ease-in-out infinite',
+          animation: 'authBrandBlob 14s ease-in-out infinite',
           willChange: 'transform',
         }} />
-        {/* Blob 2 — bottom-left anchor, opposite phase */}
         <div style={{
-          position: 'absolute', bottom: '-10%', left: '-15%',
-          width: '320px', height: '280px', borderRadius: '50%',
-          background: 'radial-gradient(ellipse, rgba(120,100,255,0.18) 0%, rgba(91,76,245,0.08) 50%, transparent 70%)',
-          filter: 'blur(80px)',
-          animation: 'authBrandBlob 16s ease-in-out infinite',
-          animationDelay: '-8s',
+          position: 'absolute',
+          width: '400px', height: '340px', borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(218,205,255,0.34) 0%, rgba(170,150,255,0.15) 50%, transparent 70%)',
+          filter: 'blur(88px)',
+          animation: 'authBrandBlob 14s ease-in-out infinite',
+          animationDelay: '-7s',
           willChange: 'transform',
         }} />
       </div>

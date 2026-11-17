@@ -104,13 +104,15 @@ body {
 .auth-logo-mobile { display: flex; }
 @media (min-width: 768px) { .auth-logo-mobile { display: none; } }
 
-/* Aurora blob motion for auth brand panel — mirrors CTA card pattern */
+/* Aurora blob motion for auth brand panel — same technique as wlAurora1 on CTA card,
+   adapted for a tall narrow panel: blob1 starts top-right, blob2 (-7s offset) starts
+   bottom-left; both collide at center on the 25% and 75% waypoints. */
 @keyframes authBrandBlob {
-  0%   { transform: translate(0%,   0%); }
-  25%  { transform: translate(-18%, 22%); }
-  50%  { transform: translate(-30%, -15%); }
-  75%  { transform: translate(14%, -24%); }
-  100% { transform: translate(0%,   0%); }
+  0%   { transform: translate(28%,  -45%); }
+  25%  { transform: translate(-8%,   58%); }
+  50%  { transform: translate(-52%, 162%); }
+  75%  { transform: translate(-8%,   58%); }
+  100% { transform: translate(28%,  -45%); }
 }
 @media (min-width: 768px) {
   .auth-form-side {
