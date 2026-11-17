@@ -11,12 +11,12 @@ import { setupBusiness } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
 const BUSINESS_TYPES = [
-  { id: 'tailoring',  label: 'Tailoring',      Icon: Scissors,   active: true  },
-  { id: 'bakery',     label: 'Bakery',          Icon: Cake,       active: false },
-  { id: 'salon',      label: 'Salon',           Icon: Sparkles,   active: false },
-  { id: 'shoemaking', label: 'Shoemaking',      Icon: Package,    active: false },
-  { id: 'farm',       label: 'Farm',            Icon: Leaf,       active: false },
-  { id: 'other',      label: 'Other',           Icon: LayoutGrid, active: false },
+  { id: 'tailoring',  label: 'Tailoring',   Icon: Scissors   },
+  { id: 'bakery',     label: 'Bakery',       Icon: Cake       },
+  { id: 'salon',      label: 'Salon',        Icon: Sparkles   },
+  { id: 'shoemaking', label: 'Shoemaking',   Icon: Package    },
+  { id: 'farm',       label: 'Farm',         Icon: Leaf       },
+  { id: 'other',      label: 'Other',        Icon: LayoutGrid },
 ]
 
 const labelStyle: React.CSSProperties = {
@@ -33,8 +33,9 @@ export default function BusinessPage() {
   const [tempToken, setTempToken] = useState<string | null>(null)
   const [businessName, setBusinessName] = useState('')
   const [selectedType, setSelectedType] = useState<string | null>(null)
-  const [comingSoonNote, setComingSoonNote] = useState(false)
+  const [otherDescription, setOtherDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [sessionExpired, setSessionExpired] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -49,36 +50,45 @@ export default function BusinessPage() {
     }
   }, [router])
 
-  function handleTypeSelect(id: string, active: boolean) {
-    if (!active) {
-      setComingSoonNote(true)
-      return
-    }
-    setComingSoonNote(false)
+  function handleTypeSelect(id: string) {
     setSelectedType(id)
+    setError(null)
+    if (id !== 'other') setOtherDescription('')
   }
 
   async function handleSubmit() {
-    if (!tempToken || !businessName.trim() || !selectedType) return
+    if (!tempToken || !canSubmit) return
     setError(null)
+    setSessionExpired(false)
     setLoading(true)
+
+    const resolvedType =
+      selectedType === 'other' ? otherDescription.trim() : selectedType!
+
     try {
       const { token } = await setupBusiness(tempToken, {
         businessName: businessName.trim(),
-        businessType: selectedType,
+        businessType: resolvedType,
       })
       localStorage.setItem('ojuowo_token', token)
       sessionStorage.removeItem('ojuowo_signup')
       router.replace('/dashboard')
     } catch (err) {
       const e = err as ApiError
-      setError(e.message ?? 'Something went wrong. Try again.')
+      if (e.code === 'TOKEN_EXPIRED' || e.code === 'UNAUTHORIZED') {
+        setSessionExpired(true)
+      } else {
+        setError(e.message ?? 'Something went wrong. Try again.')
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  const canSubmit = businessName.trim().length > 0 && selectedType !== null && !loading
+  const nameValid = businessName.trim().length >= 2
+  const typeValid = selectedType !== null
+  const otherValid = selectedType !== 'other' || otherDescription.trim().length >= 2
+  const canSubmit = nameValid && typeValid && otherValid && !loading
 
   return (
     <AuthCard step={3}>
@@ -109,8 +119,9 @@ export default function BusinessPage() {
         <div>
           <label style={labelStyle}>Business Name</label>
           <Input
-            placeholder="e.g. Amaka Couture"
+            placeholder="Your business name"
             value={businessName}
+            maxLength={100}
             onChange={(e) => setBusinessName(e.target.value)}
             disabled={loading}
             style={{
@@ -123,23 +134,18 @@ export default function BusinessPage() {
           />
         </div>
 
-        {/* Business type */}
+        {/* Business type grid */}
         <div>
           <label style={labelStyle}>What type of business is it?</label>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '10px',
-            }}
-          >
-            {BUSINESS_TYPES.map(({ id, label, Icon, active }) => {
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            {BUSINESS_TYPES.map(({ id, label, Icon }) => {
               const isSelected = selectedType === id
               return (
                 <button
                   key={id}
                   type="button"
-                  onClick={() => handleTypeSelect(id, active)}
+                  onClick={() => handleTypeSelect(id)}
+                  disabled={loading}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -147,19 +153,16 @@ export default function BusinessPage() {
                     gap: '8px',
                     padding: '14px 14px 12px',
                     borderRadius: '12px',
-                    border: isSelected
-                      ? '2px solid #5B4CF5'
-                      : '1.5px solid #E5E5EA',
+                    border: isSelected ? '2px solid #5B4CF5' : '1.5px solid #E5E5EA',
                     background: isSelected ? 'rgba(91,76,245,0.05)' : '#FAFAFA',
-                    cursor: active ? 'pointer' : 'default',
+                    cursor: loading ? 'default' : 'pointer',
                     textAlign: 'left',
                     transition: 'border-color 0.15s, background 0.15s',
-                    opacity: active ? 1 : 0.5,
                   }}
                 >
                   <Icon
                     size={18}
-                    style={{ color: isSelected ? '#5B4CF5' : active ? '#555' : '#AAA' }}
+                    style={{ color: isSelected ? '#5B4CF5' : '#555' }}
                     strokeWidth={1.75}
                   />
                   <span
@@ -167,47 +170,75 @@ export default function BusinessPage() {
                       fontFamily: 'var(--font-jakarta)',
                       fontSize: '0.82rem',
                       fontWeight: 600,
-                      color: isSelected ? '#5B4CF5' : active ? '#1A1140' : '#AAA',
+                      color: isSelected ? '#5B4CF5' : '#1A1140',
                       lineHeight: 1.2,
                     }}
                   >
                     {label}
                   </span>
-                  {!active && (
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-jakarta)',
-                        fontSize: '0.68rem',
-                        color: '#BBB',
-                        fontWeight: 500,
-                      }}
-                    >
-                      Coming soon
-                    </span>
-                  )}
                 </button>
               )
             })}
           </div>
 
-          {comingSoonNote && (
-            <p
-              style={{
-                marginTop: '10px',
+          {/* Other — description input */}
+          {selectedType === 'other' && (
+            <div style={{ marginTop: '12px' }}>
+              <Input
+                placeholder="Describe your business type"
+                value={otherDescription}
+                maxLength={80}
+                onChange={(e) => setOtherDescription(e.target.value)}
+                disabled={loading}
+                autoFocus
+                style={{
+                  fontFamily: 'var(--font-jakarta)',
+                  fontSize: '0.92rem',
+                  height: '46px',
+                  paddingLeft: '16px',
+                  paddingRight: '16px',
+                }}
+              />
+              <p style={{
+                marginTop: '6px',
                 fontFamily: 'var(--font-jakarta)',
-                fontSize: '0.82rem',
-                color: '#777',
-                lineHeight: 1.5,
-              }}
-            >
-              We are starting with tailors. More business types are coming soon.
-            </p>
+                fontSize: '0.78rem',
+                color: '#AAA',
+              }}>
+                e.g. Photography studio, Laundry service, Event planning
+              </p>
+            </div>
           )}
         </div>
 
       </div>
 
+      {/* Errors */}
       <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {sessionExpired && (
+          <div
+            role="alert"
+            style={{
+              background: '#FFF7ED',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              fontFamily: 'var(--font-jakarta)',
+              fontSize: '0.88rem',
+              fontWeight: 500,
+              color: '#92400E',
+              lineHeight: 1.5,
+            }}
+          >
+            Your session expired.{' '}
+            <a
+              href="/signup/verify"
+              style={{ color: '#B45309', fontWeight: 700, textDecoration: 'underline' }}
+            >
+              Go back to re-verify your number.
+            </a>
+          </div>
+        )}
+
         {error && (
           <div
             role="alert"
