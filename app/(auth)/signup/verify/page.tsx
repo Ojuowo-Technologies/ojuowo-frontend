@@ -55,7 +55,7 @@ export default function VerifyPage() {
         const { tempToken } = await verifyOtp(session.sessionId, value)
         const updated: SignupSessionData = { ...session, tempToken }
         sessionStorage.setItem('ojuowo_signup', JSON.stringify(updated))
-        router.push('/signup/pin')
+        router.push('/signup/business')
       } catch (err) {
         const e = err as ApiError & { attemptsLeft?: number }
         setCode('')

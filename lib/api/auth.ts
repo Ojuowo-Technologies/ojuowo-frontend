@@ -44,3 +44,13 @@ export async function setPin(tempToken: string, pin: string) {
     authToken: tempToken,
   })
 }
+
+export async function setupBusiness(tempToken: string, data: import('@/lib/types/auth').BusinessSetupInput) {
+  if (DEV_MODE) return { token: 'dev-jwt', role: 'owner' as const } satisfies AuthSession
+  return request<AuthSession>('/auth/business/setup', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    skipAuth: true,
+    authToken: tempToken,
+  })
+}
