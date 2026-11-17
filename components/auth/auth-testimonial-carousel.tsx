@@ -24,7 +24,7 @@ const TESTIMONIALS = [
   {
     quote: 'Deposits, balances, payouts, all in one place. No more confusion at the end of the month.',
     name: 'Tunde Adebisi',
-    role: 'Bespoke Cobbler, Lagos',
+    role: 'Shoe Maker, Lagos',
     initials: 'TA',
   },
 ]
