@@ -104,13 +104,13 @@ body {
 .auth-logo-mobile { display: flex; }
 @media (min-width: 768px) { .auth-logo-mobile { display: none; } }
 
-/* Orbiting glow for auth brand panel */
-@keyframes glow-orbit {
-  0%   { transform: translate(-50%, -50%) rotate(0deg)   translateX(100px) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(100px) rotate(-360deg); }
-}
-.auth-glow-orbit {
-  animation: glow-orbit 12s linear infinite;
+/* Aurora blob motion for auth brand panel — mirrors CTA card pattern */
+@keyframes authBrandBlob {
+  0%   { transform: translate(0%,   0%); }
+  25%  { transform: translate(-18%, 22%); }
+  50%  { transform: translate(-30%, -15%); }
+  75%  { transform: translate(14%, -24%); }
+  100% { transform: translate(0%,   0%); }
 }
 @media (min-width: 768px) {
   .auth-form-side {

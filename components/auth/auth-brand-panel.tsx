@@ -14,89 +14,28 @@ export function AuthBrandPanel() {
         overflow: 'hidden',
       }}
     >
-      {/* Static ambient glow */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            'radial-gradient(ellipse 85% 60% at 38% 55%, rgba(91,76,245,0.18) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Orbiting glow orb */}
-      <div
-        className="auth-glow-orbit"
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: '340px',
-          height: '340px',
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(91,76,245,0.32) 0%, rgba(155,138,255,0.14) 45%, transparent 70%)',
-          pointerEvents: 'none',
+      {/* Two aurora blobs — top-right and bottom-left, same motion as CTA card */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        {/* Blob 1 — top-right anchor */}
+        <div style={{
+          position: 'absolute', top: '-10%', right: '-15%',
+          width: '380px', height: '320px', borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(91,76,245,0.22) 0%, rgba(155,138,255,0.09) 45%, transparent 70%)',
+          filter: 'blur(72px)',
+          animation: 'authBrandBlob 16s ease-in-out infinite',
           willChange: 'transform',
-        }}
-      />
-
-      {/* Abstract blob shapes */}
-      <svg
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-        }}
-        viewBox="0 0 440 900"
-        preserveAspectRatio="xMidYMid slice"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Large ambient blob — lower left */}
-        <path
-          d="M-60 580 C20 500, 160 480, 220 560 C280 640, 240 760, 140 800 C40 840, -80 760, -100 680 C-120 600, -140 660, -60 580Z"
-          fill="rgba(91,76,245,0.22)"
-          style={{ filter: 'blur(32px)' }}
-        />
-        {/* Medium blob — upper right */}
-        <path
-          d="M300 60 C380 40, 460 100, 450 200 C440 300, 360 320, 280 280 C200 240, 180 160, 220 100 C260 40, 220 80, 300 60Z"
-          fill="rgba(155,138,255,0.18)"
-          style={{ filter: 'blur(28px)' }}
-        />
-        {/* Small accent blob — center */}
-        <path
-          d="M180 340 C230 300, 300 320, 310 390 C320 460, 260 500, 200 480 C140 460, 120 400, 180 340Z"
-          fill="rgba(190,160,255,0.12)"
-          style={{ filter: 'blur(20px)' }}
-        />
-        {/* Thin ring accent — top left area */}
-        <circle
-          cx="80"
-          cy="180"
-          r="90"
-          fill="none"
-          stroke="rgba(91,76,245,0.18)"
-          strokeWidth="1.5"
-        />
-        {/* Smaller ring — lower right */}
-        <circle
-          cx="370"
-          cy="680"
-          r="60"
-          fill="none"
-          stroke="rgba(155,138,255,0.14)"
-          strokeWidth="1"
-        />
-        {/* Dot cluster — mid right */}
-        <circle cx="390" cy="400" r="4" fill="rgba(155,138,255,0.35)" />
-        <circle cx="406" cy="420" r="2.5" fill="rgba(155,138,255,0.25)" />
-        <circle cx="378" cy="430" r="2" fill="rgba(155,138,255,0.2)" />
-      </svg>
+        }} />
+        {/* Blob 2 — bottom-left anchor, opposite phase */}
+        <div style={{
+          position: 'absolute', bottom: '-10%', left: '-15%',
+          width: '320px', height: '280px', borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(120,100,255,0.18) 0%, rgba(91,76,245,0.08) 50%, transparent 70%)',
+          filter: 'blur(80px)',
+          animation: 'authBrandBlob 16s ease-in-out infinite',
+          animationDelay: '-8s',
+          willChange: 'transform',
+        }} />
+      </div>
 
       {/* Top: logo */}
       <div
