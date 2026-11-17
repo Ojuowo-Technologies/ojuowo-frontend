@@ -6,16 +6,15 @@ import { Scissors, Cake, Sparkles, Package, Leaf, LayoutGrid } from 'lucide-reac
 import { AuthCard } from '@/components/auth/auth-card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { BackButton } from '@/components/auth/back-button'
 import { setupBusiness } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
 const BUSINESS_TYPES = [
   { id: 'tailoring',  label: 'Tailoring',   Icon: Scissors   },
-  { id: 'bakery',     label: 'Bakery',       Icon: Cake       },
+  { id: 'baking',     label: 'Baking',       Icon: Cake       },
   { id: 'salon',      label: 'Salon',        Icon: Sparkles   },
   { id: 'shoemaking', label: 'Shoemaking',   Icon: Package    },
-  { id: 'farm',       label: 'Farm',         Icon: Leaf       },
+  { id: 'farming',    label: 'Farming',      Icon: Leaf       },
   { id: 'other',      label: 'Other',        Icon: LayoutGrid },
 ]
 
@@ -92,8 +91,6 @@ export default function BusinessPage() {
 
   return (
     <AuthCard step={3}>
-      <BackButton href="/signup/verify" label="Back" />
-
       <div style={{ marginBottom: '28px', textAlign: 'center' }}>
         <h1
           style={{
@@ -158,6 +155,7 @@ export default function BusinessPage() {
                     cursor: loading ? 'default' : 'pointer',
                     textAlign: 'left',
                     transition: 'border-color 0.15s, background 0.15s',
+                    outline: 'none',
                   }}
                 >
                   <Icon
@@ -191,6 +189,7 @@ export default function BusinessPage() {
                 onChange={(e) => setOtherDescription(e.target.value)}
                 disabled={loading}
                 autoFocus
+                className="focus-visible:ring-0 focus-visible:ring-offset-0"
                 style={{
                   fontFamily: 'var(--font-jakarta)',
                   fontSize: '0.92rem',
