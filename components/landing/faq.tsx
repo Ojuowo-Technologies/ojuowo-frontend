@@ -27,7 +27,7 @@ const faqs = [
   },
   {
     q: 'How is Ojúòwò different from just using WhatsApp and spreadsheets?',
-    a: "WhatsApp and spreadsheets do not talk to each other. When a customer asks for an update, you have to check the spreadsheet, find the row, then reply on WhatsApp. Ojúòwò keeps everything in one place: the order, the worker's task, the payment record, the customer link. The update is already there.",
+    a: "WhatsApp and spreadsheets do not talk to each other. When a customer asks for an update, you have to check the spreadsheet, find the row, then reply on WhatsApp. Ojúòwò keeps everything in one place: the order, the worker's task, the payment, the customer link. The update is already there.",
   },
   {
     q: 'Is my data safe?',

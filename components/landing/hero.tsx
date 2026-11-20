@@ -147,6 +147,7 @@ function TrackingCard() {
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
   const [stage, setStage] = useState({ w: 1320, h: 900 })
+  const [isMobile, setIsMobile] = useState(false)
 
   // Track actual hero dimensions so corner offsets are always pixel-accurate
   useEffect(() => {
@@ -160,6 +161,13 @@ export function Hero() {
     const obs = new ResizeObserver(update)
     obs.observe(el)
     return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 1200)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
   }, [])
 
   // Single raw value; two springs with slightly different configs give natural stagger
@@ -227,8 +235,8 @@ export function Hero() {
       ref={sectionRef}
       aria-label="Hero"
       className="hero-section"
-      onMouseEnter={() => rawProgress.set(1)}
-      onMouseLeave={() => rawProgress.set(0)}
+      onMouseEnter={() => { if (!isMobile) rawProgress.set(1) }}
+      onMouseLeave={() => { if (!isMobile) rawProgress.set(0) }}
       style={{
         position: 'relative',
         display: 'flex',
@@ -329,7 +337,16 @@ export function Hero() {
 
       {/* Center content — hidden behind the deck, revealed as cards part */}
       <motion.div
-        style={{
+        initial={isMobile ? { opacity: 0, y: 20 } : false}
+        animate={isMobile ? { opacity: 1, y: 0 } : undefined}
+        transition={isMobile ? { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 } : undefined}
+        style={isMobile ? {
+          position: 'relative',
+          zIndex: 4,
+          textAlign: 'center',
+          maxWidth: '860px',
+          padding: '0 12px',
+        } : {
           position: 'relative',
           zIndex: 4,
           textAlign: 'center',
@@ -352,7 +369,7 @@ export function Hero() {
           }}
         >
           <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#5B4CF5', flexShrink: 0 }} />
-          Now open for early access
+          The operating system for your business
         </Badge>
 
         <h1

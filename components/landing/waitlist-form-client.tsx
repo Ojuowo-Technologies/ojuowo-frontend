@@ -26,7 +26,8 @@ export function WaitlistFormClient({ businessTypes }: { businessTypes: BusinessT
 
   const selectedType = businessTypes.find(t => t.code === businessType)
   const requiresDescription = selectedType?.requiresDescription ?? false
-  const canSubmit = !!email && !!businessType && (!requiresDescription || otherText.trim().length > 0)
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+  const canSubmit = !!businessType && isValidEmail && (!requiresDescription || otherText.trim().length > 0)
 
   const handlePillClick = (code: string) => {
     if (businessType === code) {
@@ -114,14 +115,11 @@ export function WaitlistFormClient({ businessTypes }: { businessTypes: BusinessT
           {/* Content */}
           <div style={{ position: 'relative' }}>
             <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center' }}>
-              <span style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 700, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '20px', fontFamily: 'var(--font-jakarta)' }}>
-                Early access
-              </span>
               <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(2rem, 3.71vw, 3.25rem)', color: '#FFFFFF', lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '16px' }}>
-                Get Early Access<br />Before We Open To Everyone
+                Join Before We Open<br />To Everyone
               </h2>
               <p style={{ fontFamily: 'var(--font-jakarta)', fontSize: '1rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.65, marginBottom: '36px' }}>
-                Sign up and we&apos;ll invite you before we open to the public. Free during early access, with a personal setup session.
+                Sign up and we&apos;ll personally walk you through setup when we launch. No spam, no surprises.
               </p>
             </div>
 
@@ -204,11 +202,11 @@ export function WaitlistFormClient({ businessTypes }: { businessTypes: BusinessT
                       aria-label="Email address"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder="your@email.com"
+                      placeholder={!businessType ? 'Select a business type first' : 'your@email.com'}
                       required
-                      disabled={isPending}
+                      disabled={isPending || !businessType}
                       className="rounded-full border-white/20 focus-visible:border-white/55 focus-visible:ring-white/10 bg-white/12 text-white placeholder:text-white/35 h-auto"
-                      style={{ flex: '1 1 260px', maxWidth: '340px', padding: '14px 20px', fontSize: '0.95rem', fontFamily: 'var(--font-jakarta)' }}
+                      style={{ flex: '1 1 260px', maxWidth: '340px', padding: '14px 20px', fontSize: '0.95rem', fontFamily: 'var(--font-jakarta)', opacity: !businessType ? 0.5 : 1, transition: 'opacity 0.2s ease', cursor: !businessType ? 'not-allowed' : undefined }}
                     />
                     <Button
                       type="submit"
@@ -217,7 +215,7 @@ export function WaitlistFormClient({ businessTypes }: { businessTypes: BusinessT
                       className="rounded-full h-auto whitespace-nowrap bg-white hover:bg-white/92 text-[#3A2DB5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1140]"
                       style={{ padding: '14px 32px', fontFamily: 'var(--font-jakarta)', fontWeight: 700, fontSize: '0.95rem', opacity: !canSubmit ? 0.5 : 1, transition: 'opacity 0.15s ease, box-shadow 0.2s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}
                     >
-                      {isPending ? 'Joining…' : 'Get early access'}
+                      {isPending ? 'Joining…' : 'Join the waitlist'}
                     </Button>
                   </div>
                 </div>

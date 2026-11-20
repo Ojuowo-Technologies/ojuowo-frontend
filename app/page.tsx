@@ -72,7 +72,7 @@ const jsonLd = {
           name: 'How is Ojúòwò different from just using WhatsApp and spreadsheets?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: "WhatsApp and spreadsheets do not talk to each other. When a customer asks for an update, you have to check the spreadsheet, find the row, then reply on WhatsApp. Ojúòwò keeps everything in one place: the order, the worker's task, the payment record, the customer link. The update is already there.",
+            text: "WhatsApp and spreadsheets do not talk to each other. When a customer asks for an update, you have to check the spreadsheet, find the row, then reply on WhatsApp. Ojúòwò keeps everything in one place: the order, the worker's task, the payment, the customer link. The update is already there.",
           },
         },
       ],

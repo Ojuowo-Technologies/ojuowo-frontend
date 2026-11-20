@@ -85,7 +85,7 @@ const BUSINESSES: Business[] = [
     features: [
       'Item count and care notes per drop-off',
       'Customer notified by link when laundry is ready',
-      'Payment and balance tracked per order',
+      'Payments collected and balance tracked per order',
     ],
     image: '/images/businesses/laundromat.png',
     imagePos: '45% 0%',
@@ -98,7 +98,7 @@ const BUSINESSES: Business[] = [
     features: [
       'Produce orders with quantities and variety',
       'Harvest and delivery date tracking',
-      'Customer payment history per season',
+      'Payments processed and history tracked per season',
     ],
     image: '/images/businesses/farming.png',
     imagePos: '50% 0%',
