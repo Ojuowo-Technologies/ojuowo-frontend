@@ -3,6 +3,7 @@
 export async function joinWaitlist(
   email: string,
   businessType: string,
+  otherBusinessType: string | undefined,
   honeypot = '',
 ): Promise<{ ok: boolean; message: string }> {
   // Honeypot: real users never fill this field — bots do. Return fake success so bots don't retry.
@@ -19,15 +20,19 @@ export async function joinWaitlist(
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
   if (!apiUrl) {
-    console.log('[waitlist] API URL not set. Received:', { email, businessType })
+    console.log('[waitlist] API URL not set. Received:', { email, businessType, otherBusinessType })
     return { ok: true, message: "You're on the list. We'll be in touch." }
   }
 
   try {
-    const res = await fetch(`${apiUrl}/waitlist`, {
+    const res = await fetch(`${apiUrl}/api/public/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, businessType }),
+      body: JSON.stringify({
+        email,
+        businessType,
+        ...(otherBusinessType ? { otherBusinessType } : {}),
+      }),
     })
 
     if (!res.ok) {
