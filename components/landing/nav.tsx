@@ -111,16 +111,8 @@ export function Nav() {
                   borderRadius: '9999px',
                   transition: 'color 0.2s, background-color 0.2s',
                 }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLAnchorElement
-                  el.style.color = '#5B4CF5'
-                  el.style.backgroundColor = 'rgba(91,76,245,0.06)'
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLAnchorElement
-                  el.style.color = '#444'
-                  el.style.backgroundColor = 'transparent'
-                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#5B4CF5' }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#444' }}
               >
                 {link.label}
               </a>
@@ -273,16 +265,8 @@ export function Nav() {
                 width: '100%',
                 transition: 'background-color 0.15s ease, color 0.15s ease',
               }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.color = '#5B4CF5'
-                el.style.backgroundColor = 'rgba(91,76,245,0.06)'
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.color = '#333'
-                el.style.backgroundColor = 'transparent'
-              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#5B4CF5' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#333' }}
             >
               {link.label}
             </a>

@@ -121,7 +121,7 @@ const BUSINESSES: Business[] = [
 
 // ── Animation ─────────────────────────────────────────────────────────────────
 
-const DWELL_MS = 4500
+const DWELL_MS = 4000
 const SPRING   = { type: 'spring', stiffness: 40, damping: 18, mass: 1.1 } as const
 
 // Full ±100% travel on enter AND exit — creates the split-colour midpoint wipe

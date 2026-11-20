@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -45 100 100" width="800" height="800" role="img" aria-label="Ojúòwò mark, dark mode">
-  <title>Ojúòwò</title>
-  <circle cx="-17" cy="-4" r="15" fill="none" stroke="#F4EEE2" stroke-width="7"/>
-  <circle cx="17" cy="-4" r="15" fill="none" stroke="#D9C7A0" stroke-width="7"/>
-  <circle cx="-17" cy="-4" r="5" fill="#F4EEE2"/>
-  <circle cx="17" cy="-4" r="5" fill="#D9C7A0"/>
-  <path d="M-16 24 Q0 36 16 24" fill="none" stroke="#D9C7A0" stroke-width="5" stroke-linecap="round"/>
-</svg>

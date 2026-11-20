@@ -387,8 +387,8 @@ export function Hero() {
                   overflow: 'hidden',
                 }}
               >
-                <path d="M 2 11 C 45 6, 95 16, 145 8 C 168 5, 185 11, 198 8" stroke="#F97316" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M 3 25 C 48 19, 102 30, 152 21 C 172 17, 186 24, 197 20" stroke="#F97316" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M 2 8 C 40 6, 80 10, 100 18 C 120 26, 160 28, 198 26" stroke="#EC4899" strokeWidth="6.25" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M 2 26 C 40 28, 80 24, 100 18 C 120 12, 160 8, 198 8" stroke="#EC4899" strokeWidth="6.25" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
           </span>

@@ -7,7 +7,7 @@ import DataPixelArc from '@/components/originkit/ui/data-pixel-arc'
 const NAV_LINKS = [
   { label: 'How It Works', href: '#how-it-works' },
   { label: 'Features',     href: '#features'     },
-  { label: 'FAQ',          href: '#faq'           },
+  { label: 'FAQs',         href: '#faq'           },
 ]
 
 function XIcon() {
