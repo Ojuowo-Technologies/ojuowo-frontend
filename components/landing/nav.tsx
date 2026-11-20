@@ -80,7 +80,7 @@ export function Nav() {
           style={{ maxWidth: '1320px', margin: '0 auto' }}
         >
           <a
-            href="#"
+            href="/"
             aria-label="Ojúòwò Home"
             className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B4CF5] focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all"
             style={{
@@ -128,7 +128,7 @@ export function Nav() {
           </nav>
 
           {/* Desktop CTAs */}
-          <div className="nav-cta-desktop" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="nav-cta-desktop" style={{ alignItems: 'center', gap: '8px' }}>
             <a
               href="/login"
               className={cn(
@@ -226,7 +226,7 @@ export function Nav() {
           marginBottom: '40px',
         }}>
           <a
-            href="#"
+            href="/"
             onClick={closeMenu}
             aria-label="Ojúòwò Home"
             style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}

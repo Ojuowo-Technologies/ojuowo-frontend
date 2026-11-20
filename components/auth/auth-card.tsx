@@ -1,45 +1,38 @@
 import { Logo } from '@/components/ui/logo'
-import { cn } from '@/lib/utils'
-
-function StepBar({ step }: { step: 1 | 2 | 3 }) {
-  return (
-    <div
-      className="flex items-center gap-1.5"
-      style={{ marginBottom: '32px' }}
-      role="progressbar"
-      aria-valuenow={step}
-      aria-valuemin={1}
-      aria-valuemax={3}
-      aria-label={`Step ${step} of 3`}
-    >
-      {([1, 2, 3] as const).map((s) => (
-        <div
-          key={s}
-          className={cn(
-            'h-[3px] flex-1 rounded-full transition-colors duration-500',
-            s <= step ? 'bg-[#5B4CF5]' : 'bg-[#DDD8FF]',
-          )}
-        />
-      ))}
-    </div>
-  )
-}
 
 export function AuthCard({
   children,
-  step,
+  stepLabel,
 }: {
   children: React.ReactNode
-  step: 1 | 2 | 3
+  stepLabel?: string
 }) {
   return (
     <div>
       <div className="auth-logo-mobile" style={{ justifyContent: 'center', marginBottom: '28px' }}>
         <a href="/" aria-label="Go to Ojuowo home" style={{ display: 'inline-flex', textDecoration: 'none' }}>
-          <Logo variant="light" />
+          <Logo variant="default" />
         </a>
       </div>
-      <StepBar step={step} />
+
+      {stepLabel && (
+        <p
+          style={{
+            fontFamily: 'var(--font-jakarta)',
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            color: '#5B4CF5',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+            marginBottom: '20px',
+          }}
+          aria-label={stepLabel}
+        >
+          {stepLabel}
+        </p>
+      )}
+
       {children}
     </div>
   )

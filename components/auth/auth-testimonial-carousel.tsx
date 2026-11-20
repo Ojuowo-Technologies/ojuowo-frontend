@@ -4,28 +4,28 @@ import { useState, useEffect } from 'react'
 
 const TESTIMONIALS = [
   {
-    quote: 'Running three orders at once felt impossible until Ojuowo.',
+    quote: 'I can see every order, every payment, and what every tailor is working on. Right from my phone.',
     name: 'Taiwo Adeyemi',
-    role: 'Bespoke Tailor, Lagos',
+    role: 'Owner, S.I.G Clothing',
     initials: 'TA',
   },
   {
-    quote: 'I used to track orders in a notebook. Now I know exactly what is due every day.',
-    name: 'Funmi Olatunji',
-    role: 'Custom Cakes, Ibadan',
-    initials: 'FO',
+    quote: 'Assigning work to the team used to take my whole morning. Now I do it in minutes.',
+    name: 'Kemi Okafor',
+    role: 'Manager, S.I.G Clothing',
+    initials: 'KO',
   },
   {
-    quote: 'My stylists know their tasks before I even brief them in the morning.',
-    name: 'Amara Eze',
-    role: 'Hair Studio, Abuja',
-    initials: 'AE',
+    quote: 'I open the app and I know exactly what I\'m sewing today. No more waiting to be briefed.',
+    name: 'Musa Ibrahim',
+    role: 'Tailor, S.I.G Clothing',
+    initials: 'MI',
   },
   {
-    quote: 'Deposits, balances, payouts, all in one place. No more confusion at the end of the month.',
-    name: 'Tunde Adebisi',
-    role: 'Shoe Maker, Lagos',
-    initials: 'TA',
+    quote: 'I could see my dress going from cutting to finishing. I knew exactly when to pick it up.',
+    name: 'Ngozi Obi',
+    role: 'Customer, S.I.G Clothing',
+    initials: 'NO',
   },
 ]
 

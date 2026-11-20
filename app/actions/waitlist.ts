@@ -24,7 +24,7 @@ export async function joinWaitlist(
   }
 
   try {
-    const res = await fetch(`${apiUrl}/waitlist`, {
+    const res = await fetch(`${apiUrl}/api/public/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, businessType }),

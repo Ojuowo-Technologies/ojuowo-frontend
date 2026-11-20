@@ -52,10 +52,17 @@ export default function VerifyPage() {
       setError(null)
       setLoading(true)
       try {
-        const { tempToken } = await verifyOtp(session.sessionId, value)
-        const updated: SignupSessionData = { ...session, tempToken }
-        sessionStorage.setItem('ojuowo_signup', JSON.stringify(updated))
-        router.push('/signup/business')
+        const auth = await verifyOtp(session.signupId, value)
+        localStorage.setItem('ojuowo_token', auth.accessToken)
+        localStorage.setItem('ojuowo_refresh', auth.refreshToken)
+        document.cookie = 'oj_auth=1; path=/; SameSite=Strict; Max-Age=86400'
+        const needsBusiness = !auth.onboarding.completed || auth.business === null
+        if (needsBusiness) {
+          router.push('/signup/business')
+        } else {
+          sessionStorage.removeItem('ojuowo_signup')
+          router.replace(auth.user.role === 'WORKER' ? '/worker' : '/dashboard')
+        }
       } catch (err) {
         const e = err as ApiError & { attemptsLeft?: number }
         setCode('')
@@ -89,7 +96,7 @@ export default function VerifyPage() {
   async function handleResend() {
     if (!session || cooldown > 0) return
     try {
-      await resendOtp(session.sessionId)
+      await resendOtp(session.signupId)
       setCooldown(RESEND_COOLDOWN)
       setError(null)
       toast.success('Code resent')
@@ -101,7 +108,7 @@ export default function VerifyPage() {
 
   return (
     <>
-      <AuthCard step={2}>
+      <AuthCard>
       <BackButton href="/signup" label="Back" />
 
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
@@ -110,7 +117,7 @@ export default function VerifyPage() {
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(1.4rem, 4vw, 1.65rem)',
             fontWeight: 700,
-            color: '#0D0D0D',
+            color: 'var(--color-text-primary)',
             lineHeight: 1.2,
             letterSpacing: '-0.02em',
             marginBottom: '8px',
@@ -122,7 +129,7 @@ export default function VerifyPage() {
           style={{
             fontFamily: 'var(--font-jakarta)',
             fontSize: '0.9rem',
-            color: '#777',
+            color: 'var(--color-text-muted)',
             lineHeight: 1.55,
           }}
         >
@@ -158,13 +165,13 @@ export default function VerifyPage() {
         <div
           role="alert"
           style={{
-            background: '#FFF1F2',
+            background: 'var(--color-error-bg)',
             borderRadius: '10px',
             padding: '12px 16px',
             marginBottom: '20px',
             fontFamily: 'var(--font-jakarta)',
             fontSize: '0.88rem',
-            color: '#C0152A',
+            color: 'var(--color-error)',
             lineHeight: 1.5,
           }}
         >
@@ -181,7 +188,7 @@ export default function VerifyPage() {
               fontFamily: 'var(--font-jakarta)',
               fontSize: '0.88rem',
               fontWeight: 600,
-              color: cooldown > 0 ? '#AAA' : '#5B4CF5',
+              color: cooldown > 0 ? 'var(--color-text-placeholder)' : 'var(--color-accent)',
               background: 'none',
               border: 'none',
               cursor: cooldown > 0 ? 'default' : 'pointer',

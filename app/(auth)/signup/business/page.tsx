@@ -2,50 +2,59 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Scissors, Cake, Sparkles, Package, Leaf, LayoutGrid } from 'lucide-react'
+import { Scissors, ChefHat, Wand2, Hammer, Wheat, Store } from 'lucide-react'
 import { AuthCard } from '@/components/auth/auth-card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { setupBusiness } from '@/lib/api/auth'
+import { joinWaitlist } from '@/lib/api/auth'
 import type { ApiError, SignupSessionData } from '@/lib/types/auth'
 
 const BUSINESS_TYPES = [
-  { id: 'tailoring',  label: 'Tailoring',   Icon: Scissors   },
-  { id: 'baking',     label: 'Baking',       Icon: Cake       },
-  { id: 'salon',      label: 'Salon',        Icon: Sparkles   },
-  { id: 'shoemaking', label: 'Shoemaking',   Icon: Package    },
-  { id: 'farming',    label: 'Farming',      Icon: Leaf       },
-  { id: 'other',      label: 'Other',        Icon: LayoutGrid },
+  { id: 'tailoring',  label: 'Tailoring',   Icon: Scissors },
+  { id: 'baking',     label: 'Baking',       Icon: ChefHat  },
+  { id: 'salon',      label: 'Salon',        Icon: Wand2    },
+  { id: 'shoemaking', label: 'Shoemaking',   Icon: Hammer   },
+  { id: 'farming',    label: 'Farming',      Icon: Wheat    },
+  { id: 'other',      label: 'Other',        Icon: Store    },
 ]
+
+const ACTIVE_TYPE = 'tailoring'
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontFamily: 'var(--font-jakarta)',
   fontSize: '0.85rem',
   fontWeight: 600,
-  color: '#333',
+  color: 'var(--color-text-secondary)',
   marginBottom: '8px',
 }
 
 export default function BusinessPage() {
   const router = useRouter()
-  const [tempToken, setTempToken] = useState<string | null>(null)
+  const [ownerName, setOwnerName] = useState('')
+  const [ownerEmail, setOwnerEmail] = useState('')
   const [businessName, setBusinessName] = useState('')
+  const [nameTouched, setNameTouched] = useState(false)
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [otherDescription, setOtherDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [sessionExpired, setSessionExpired] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [waitlistJoined, setWaitlistJoined] = useState(false)
+
+  const nameError = nameTouched && businessName.trim().length === 0
+    ? 'Business Name field cannot be empty'
+    : null
 
   useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('ojuowo_token') : null
+    if (!token) { router.replace('/signup'); return }
     const raw = sessionStorage.getItem('ojuowo_signup')
-    if (!raw) { router.replace('/signup'); return }
-    try {
-      const parsed = JSON.parse(raw) as SignupSessionData
-      if (!parsed.tempToken) { router.replace('/signup'); return }
-      setTempToken(parsed.tempToken)
-    } catch {
-      router.replace('/signup')
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as SignupSessionData
+        setOwnerName(parsed.name?.split(' ')[0] ?? '')
+        setOwnerEmail(parsed.email ?? '')
+      } catch { /* ignore */ }
     }
   }, [router])
 
@@ -56,41 +65,116 @@ export default function BusinessPage() {
   }
 
   async function handleSubmit() {
-    if (!tempToken || !canSubmit) return
-    setError(null)
-    setSessionExpired(false)
-    setLoading(true)
+    if (!canSubmit) return
 
-    const resolvedType =
-      selectedType === 'other' ? otherDescription.trim() : selectedType!
-
-    try {
-      const { token } = await setupBusiness(tempToken, {
-        businessName: businessName.trim(),
-        businessType: resolvedType,
-      })
-      localStorage.setItem('ojuowo_token', token)
-      sessionStorage.removeItem('ojuowo_signup')
-      router.replace('/dashboard')
-    } catch (err) {
-      const e = err as ApiError
-      if (e.code === 'TOKEN_EXPIRED' || e.code === 'UNAUTHORIZED') {
-        setSessionExpired(true)
-      } else {
-        setError(e.message ?? 'Something went wrong. Try again.')
+    // Non-tailoring types → call waitlist endpoint, then show confirmation
+    if (selectedType !== ACTIVE_TYPE) {
+      setLoading(true)
+      try {
+        await joinWaitlist({
+          email: ownerEmail,
+          businessType: selectedType,
+          ...(selectedType === 'other' ? { otherBusinessType: otherDescription.trim() } : {}),
+        })
+      } catch { /* waitlist failure is non-blocking */ } finally {
+        setLoading(false)
       }
-    } finally {
-      setLoading(false)
+      setWaitlistJoined(true)
+      return
     }
+
+    // Tailoring → go to dashboard (user is already authenticated from OTP verify)
+    sessionStorage.removeItem('ojuowo_signup')
+    router.replace('/dashboard')
   }
 
+  const isWaitlist = selectedType !== null && selectedType !== ACTIVE_TYPE
   const nameValid = businessName.trim().length >= 2
   const typeValid = selectedType !== null
   const otherValid = selectedType !== 'other' || otherDescription.trim().length >= 2
   const canSubmit = nameValid && typeValid && otherValid && !loading
 
+  const rawOther = otherDescription.trim()
+  const capitalisedOther = rawOther ? rawOther.charAt(0).toUpperCase() + rawOther.slice(1) : ''
+  const waitlistTypeName = selectedType === 'other'
+    ? capitalisedOther || 'your business type'
+    : BUSINESS_TYPES.find(t => t.id === selectedType)?.label ?? 'your business type'
+
+  if (waitlistJoined) {
+    return (
+      <AuthCard>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: 'rgba(91,76,245,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12.5L10 17.5L19 8" stroke="#5B4CF5" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+
+          <h1 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.3rem, 4vw, 1.55rem)',
+            fontWeight: 700,
+            color: 'var(--color-text-primary)',
+            lineHeight: 1.2,
+            letterSpacing: '-0.02em',
+            marginBottom: '12px',
+          }}>
+            You&apos;re On The List!
+          </h1>
+
+          <p style={{
+            fontFamily: 'var(--font-jakarta)',
+            fontSize: '0.9rem',
+            color: 'var(--color-text-muted)',
+            lineHeight: 1.65,
+            marginBottom: '32px',
+          }}>
+            {ownerName ? `Thanks, ${ownerName}. ` : ''}We&apos;re bringing Ojúòwò to{' '}
+            <strong style={{ color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+              {waitlistTypeName}
+            </strong>{' '}
+            businesses soon.{' '}
+            <strong style={{ color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+              {businessName.trim()}
+            </strong>{' '}
+            will be the first to know when it&apos;s ready.
+          </p>
+
+          <a
+            href="/"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '50px',
+              borderRadius: '9999px',
+              background: 'var(--color-accent)',
+              color: '#FFFFFF',
+              fontFamily: 'var(--font-jakarta)',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              textDecoration: 'none',
+            }}
+          >
+            Back to home
+          </a>
+        </div>
+      </AuthCard>
+    )
+  }
+
   return (
-    <AuthCard step={3}>
+    <AuthCard stepLabel="Step 2 of 2">
       <div style={{ marginBottom: '28px', textAlign: 'center' }}>
         <h1
           style={{
@@ -120,15 +204,28 @@ export default function BusinessPage() {
             value={businessName}
             maxLength={100}
             onChange={(e) => setBusinessName(e.target.value)}
+            onBlur={() => { setNameTouched(true); setBusinessName((v) => v.trim()) }}
             disabled={loading}
+            aria-invalid={nameError ? true : undefined}
             style={{
               fontFamily: 'var(--font-jakarta)',
               fontSize: '0.95rem',
               height: '48px',
               paddingLeft: '16px',
               paddingRight: '16px',
+              ...(nameTouched && !nameError && businessName.trim().length >= 2 ? { background: 'var(--color-field-valid-bg)' } : {}),
             }}
           />
+          {nameError && (
+            <p style={{
+              marginTop: '4px',
+              fontFamily: 'var(--font-jakarta)',
+              fontSize: '0.8rem',
+              color: 'var(--color-error)',
+            }}>
+              {nameError}
+            </p>
+          )}
         </div>
 
         {/* Business type grid */}
@@ -137,6 +234,7 @@ export default function BusinessPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {BUSINESS_TYPES.map(({ id, label, Icon }) => {
               const isSelected = selectedType === id
+              const isActive = id === ACTIVE_TYPE
               return (
                 <button
                   key={id}
@@ -147,7 +245,7 @@ export default function BusinessPage() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',
-                    gap: '8px',
+                    gap: '6px',
                     padding: '14px 14px 12px',
                     borderRadius: '12px',
                     border: isSelected ? '2px solid #5B4CF5' : '1.5px solid #E5E5EA',
@@ -174,6 +272,18 @@ export default function BusinessPage() {
                   >
                     {label}
                   </span>
+                  {!isActive && (
+                    <span style={{
+                      fontFamily: 'var(--font-jakarta)',
+                      fontSize: '0.63rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
+                      color: isSelected ? '#5B4CF5' : '#AAA',
+                    }}>
+                      Coming soon
+                    </span>
+                  )}
                 </button>
               )
             })}
@@ -189,7 +299,6 @@ export default function BusinessPage() {
                 onChange={(e) => setOtherDescription(e.target.value)}
                 disabled={loading}
                 autoFocus
-                className="focus-visible:ring-0 focus-visible:ring-offset-0"
                 style={{
                   fontFamily: 'var(--font-jakarta)',
                   fontSize: '0.92rem',
@@ -214,41 +323,17 @@ export default function BusinessPage() {
 
       {/* Errors */}
       <div style={{ marginTop: '28px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {sessionExpired && (
-          <div
-            role="alert"
-            style={{
-              background: '#FFF7ED',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              fontFamily: 'var(--font-jakarta)',
-              fontSize: '0.88rem',
-              fontWeight: 500,
-              color: '#92400E',
-              lineHeight: 1.5,
-            }}
-          >
-            Your session expired.{' '}
-            <a
-              href="/signup/verify"
-              style={{ color: '#B45309', fontWeight: 700, textDecoration: 'underline' }}
-            >
-              Go back to re-verify your number.
-            </a>
-          </div>
-        )}
-
         {error && (
           <div
             role="alert"
             style={{
-              background: '#FFF1F2',
+              background: 'var(--color-error-bg)',
               borderRadius: '10px',
               padding: '12px 16px',
               fontFamily: 'var(--font-jakarta)',
               fontSize: '0.88rem',
               fontWeight: 500,
-              color: '#C0152A',
+              color: 'var(--color-error)',
               lineHeight: 1.5,
             }}
           >
@@ -262,7 +347,7 @@ export default function BusinessPage() {
           className="w-full rounded-full"
           style={{ height: '50px', fontFamily: 'var(--font-jakarta)', fontWeight: 700, fontSize: '0.95rem' }}
         >
-          {loading ? 'Setting up...' : 'Get Started'}
+          {loading ? 'Setting up...' : selectedType !== null && selectedType !== ACTIVE_TYPE ? 'Join the Waitlist' : 'Get Started'}
         </Button>
       </div>
     </AuthCard>

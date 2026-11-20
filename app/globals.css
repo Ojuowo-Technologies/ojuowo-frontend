@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Brand colors */
+  /* Brand colors — used in Tailwind utilities and CSS rules, so they must stay here */
   --color-background: #F0F0F4;
   --color-surface: #FFFFFF;
   --color-accent: #5B4CF5;
@@ -15,10 +15,8 @@
   --color-dark: #1A1140;
   --color-border: #E0DCFF;
 
-  /* Text */
+  /* Text primary — used in body { color } rule so Tailwind keeps it */
   --color-text-primary: #0D0D0D;
-  --color-text-secondary: #333333;
-  --color-text-muted: #777777;
 
   /* Fonts */
   --font-display: var(--font-display), system-ui, sans-serif;
@@ -29,10 +27,60 @@
   --radius-pill: 9999px;
 }
 
+/* ── Semantic color system ──────────────────────────────────────────
+   Defined outside @theme so Tailwind's tree-shaker never prunes them.
+   Each state has: solid (text/icon), bg (banner background), border.
+   ──────────────────────────────────────────────────────────────────── */
+:root {
+  /* Brand — anchored here so @theme inline { --color-accent: var(--accent) } can't override */
+  --color-accent: #5B4CF5;
+  --color-accent-hover: #4A3BD4;
+  --color-accent-light: #EDE9FF;
+  --color-accent-muted: rgba(91, 76, 245, 0.08);
+  --color-dark: #1A1140;
+
+  /* Typography */
+  --color-text-primary: #0D0D0D;
+  --color-text-secondary: #333333;
+  --color-text-muted: #777777;
+  --color-text-placeholder: #AAAAAA;
+
+  /* Error — dark red */
+  --color-error: #C0152A;
+  --color-error-bg: #FFF1F2;
+  --color-error-border: #FECDD3;
+
+  /* Success — dark green */
+  --color-success: #166534;
+  --color-success-bg: #F0FDF4;
+  --color-success-border: #BBF7D0;
+
+  /* Warning — dark amber */
+  --color-warning: #92400E;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #FDE68A;
+
+  /* Info — dark blue */
+  --color-info: #1E40AF;
+  --color-info-bg: #EFF6FF;
+  --color-info-border: #BFDBFE;
+
+  /* Form field valid state — matches Chrome autofill blue */
+  --color-field-valid-bg: #e8f0fe;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #e8f0fe inset !important;
+  box-shadow: 0 0 0 1000px #e8f0fe inset !important;
+  -webkit-text-fill-color: #0D0D0D !important;
 }
 
 html {
@@ -400,7 +448,7 @@ body {
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #C0152A;
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);

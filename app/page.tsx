@@ -5,7 +5,7 @@ import { HowItWorks } from '@/components/landing/how-it-works'
 import { ForYourBusiness } from '@/components/landing/for-your-business'
 import { Features } from '@/components/landing/features'
 import { FAQ } from '@/components/landing/faq'
-import { SignupCTA } from '@/components/landing/waitlist-form'
+import { WaitlistForm } from '@/components/landing/waitlist-form'
 import { Footer } from '@/components/landing/footer'
 
 const jsonLd = {
@@ -94,7 +94,7 @@ export default function Home() {
       <ForYourBusiness />
       <Features />
       <FAQ />
-      <SignupCTA />
+      <WaitlistForm />
       <Footer />
     </main>
   )

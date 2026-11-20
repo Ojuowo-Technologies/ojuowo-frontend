@@ -1,56 +1,50 @@
 import { request } from './client'
-import type { SignUpInput, AuthSession } from '@/lib/types/auth'
-
-const DEV_MODE = !process.env.NEXT_PUBLIC_API_URL
+import type { SignUpInput, LoginInput, WaitlistInput, AuthResponse, SignupInitResponse } from '@/lib/types/auth'
 
 export async function signUp(data: SignUpInput) {
-  if (DEV_MODE) return { sessionId: 'dev-session' }
-  return request<{ sessionId: string }>('/auth/signup', {
+  return request<SignupInitResponse>('/api/v1/auth/signup', {
     method: 'POST',
     body: JSON.stringify(data),
     skipAuth: true,
   })
 }
 
-export async function verifyOtp(sessionId: string, code: string) {
-  if (DEV_MODE) {
-    if (code === '000000') {
-      throw { code: 'INVALID_OTP', message: 'Incorrect code.', attemptsLeft: 4 }
-    }
-    return { tempToken: 'dev-temp-token' }
-  }
-  return request<{ tempToken: string }>('/auth/otp/verify', {
+export async function verifyOtp(signupId: string, code: string) {
+  return request<AuthResponse>('/api/v1/auth/signup/verify', {
     method: 'POST',
-    body: JSON.stringify({ sessionId, code }),
+    body: JSON.stringify({ signupId, code }),
     skipAuth: true,
   })
 }
 
-export async function resendOtp(sessionId: string) {
-  if (DEV_MODE) return
-  return request<void>('/auth/otp/resend', {
+export async function resendOtp(signupId: string) {
+  return request<void>('/api/v1/auth/signup/resend', {
     method: 'POST',
-    body: JSON.stringify({ sessionId }),
+    body: JSON.stringify({ signupId }),
     skipAuth: true,
   })
 }
 
-export async function setPin(tempToken: string, pin: string) {
-  if (DEV_MODE) return { token: 'dev-jwt', role: 'owner' } satisfies AuthSession
-  return request<AuthSession>('/auth/pin/set', {
-    method: 'POST',
-    body: JSON.stringify({ pin }),
-    skipAuth: true,
-    authToken: tempToken,
-  })
-}
-
-export async function setupBusiness(tempToken: string, data: import('@/lib/types/auth').BusinessSetupInput) {
-  if (DEV_MODE) return { token: 'dev-jwt', role: 'owner' as const } satisfies AuthSession
-  return request<AuthSession>('/auth/business/setup', {
+export async function login(data: LoginInput) {
+  return request<AuthResponse>('/api/v1/auth/login', {
     method: 'POST',
     body: JSON.stringify(data),
     skipAuth: true,
-    authToken: tempToken,
+  })
+}
+
+export async function requestPasswordReset(identifier: string, channel: 'PHONE' | 'EMAIL' = 'PHONE') {
+  return request<{ resetId: string }>('/api/v1/auth/password/forgot', {
+    method: 'POST',
+    body: JSON.stringify({ identifier, channel }),
+    skipAuth: true,
+  })
+}
+
+export async function joinWaitlist(data: WaitlistInput) {
+  return request<void>('/api/public/waitlist', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    skipAuth: true,
   })
 }
