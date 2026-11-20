@@ -408,10 +408,12 @@ body {
   --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
-  --color-border: var(--border);
+  /* --color-border intentionally NOT mapped here — it is our purple-tinted #E0DCFF,
+     not shadcn's neutral border. Defined in :root above. */
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
+  /* --color-accent intentionally NOT mapped here — it is our brand purple (#5B4CF5),
+     not shadcn's neutral accent. Defined in :root above. */
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);

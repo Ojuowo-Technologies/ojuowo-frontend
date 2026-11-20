@@ -83,9 +83,9 @@ export default function BusinessPage() {
       return
     }
 
-    // Tailoring → go to dashboard (user is already authenticated from OTP verify)
+    // Tailoring → go to onboarding checklist (user is already authenticated from OTP verify)
     sessionStorage.removeItem('ojuowo_signup')
-    router.replace('/dashboard')
+    router.replace('/dashboard/setup')
   }
 
   const isWaitlist = selectedType !== null && selectedType !== ACTIVE_TYPE

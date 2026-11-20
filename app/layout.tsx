@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Bricolage_Grotesque, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
@@ -70,7 +71,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn(bricolage.variable, jakarta.variable)}>
-      <body>{children}</body>
+      <body>
+        <TooltipProvider>{children}</TooltipProvider>
+      </body>
     </html>
   )
 }

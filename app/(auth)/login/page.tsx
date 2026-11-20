@@ -118,7 +118,10 @@ function LoginForm() {
       localStorage.setItem('ojuowo_token', auth.accessToken)
       localStorage.setItem('ojuowo_refresh', auth.refreshToken)
       document.cookie = 'oj_auth=1; path=/; SameSite=Strict; Max-Age=86400'
-      const destination = auth.user.role === 'WORKER' ? '/worker' : redirectTo
+      let destination = auth.user.role === 'WORKER' ? '/worker' : redirectTo
+      if (auth.user.role !== 'WORKER' && !auth.onboarding?.completed) {
+        destination = '/dashboard/setup'
+      }
       router.replace(destination)
     } catch (err) {
       if (err instanceof TypeError) {

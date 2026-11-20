@@ -29,8 +29,10 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect authenticated users away from login / signup root
-  if (AUTH_ENTRY.includes(pathname) && isAuthed) {
+  // In mock/dev mode, never block access to auth pages so the signup flow
+  // can always be tested from scratch without clearing browser state manually.
+  const isMock = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true'
+  if (!isMock && AUTH_ENTRY.includes(pathname) && isAuthed) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
