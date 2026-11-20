@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
     description:
-      'Manage orders, let customers track jobs by link, assign staff tasks and calculate pay. Built for Nigerian small businesses. Join the waitlist.',
+      'Manage orders, let customers track by link, assign tasks, calculate pay. For Nigerian small businesses. Join the waitlist.',
     type: 'website',
     locale: 'en_NG',
     url: '/',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
     description:
-      'Manage orders, let customers track jobs by link, assign staff tasks and calculate pay. Built for Nigerian small businesses. Join the waitlist.',
+      'Manage orders, let customers track by link, assign tasks, calculate pay. For Nigerian small businesses. Join the waitlist.',
   },
   robots: {
     index: true,
