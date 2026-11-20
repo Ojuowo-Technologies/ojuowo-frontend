@@ -22,7 +22,7 @@ import type { ApiError } from '@/lib/types/auth'
 
 const schema = z.object({
   identifier: z.string()
-    .min(1, 'Email or phone field cannot be empty'),
+    .min(1, 'Email field cannot be empty'),
   password: z.string()
     .min(1, 'Password field cannot be empty'),
 })
@@ -131,7 +131,7 @@ function LoginForm() {
       const e = err as ApiError
 
       if (e.code === 'INVALID_CREDENTIALS' || e.code === 'ACCOUNT_NOT_FOUND') {
-        setServerError('Incorrect email/phone or password.')
+        setServerError('Incorrect email or password.')
         form.setValue('password', '')
       } else if (e.code === 'TOO_MANY_ATTEMPTS') {
         const secs = e.retryAfterSeconds ?? 900
@@ -269,11 +269,11 @@ function LoginForm() {
               name="identifier"
               render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel style={labelStyle}>Email or Phone Number</FormLabel>
+                  <FormLabel style={labelStyle}>Email</FormLabel>
                   <FormControl>
                     <Input
-                      type="text"
-                      placeholder="amaka@example.com or 08012345678"
+                      type="email"
+                      placeholder="your@email.com"
                       disabled={isDisabled}
                       autoComplete="username"
                       style={{ ...inputStyle, ...(fieldState.isTouched && !fieldState.error && field.value.length > 0 ? successBg : {}) }}

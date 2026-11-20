@@ -1,6 +1,6 @@
 'use client'
 
-import { Check } from 'lucide-react'
+import { Check, ArrowRight, ArrowDown, ArrowUpRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { motion } from 'framer-motion'
 import { FadeUp } from './animate'
@@ -97,15 +97,15 @@ function IllustrationTracking() {
           }}>
             <span style={{ fontSize: '0.62rem', color: '#5B4CF5', fontWeight: 600, fontFamily: 'var(--font-jakarta)' }}>ojuowo.com/track/amaka-021</span>
             <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: '#5B4CF5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ color: '#fff', fontSize: '0.5rem' }}>↗</span>
+              <ArrowUpRight size={8} style={{ color: '#fff' }} />
             </div>
           </div>
         </div>
       </div>
 
       {/* Arrow — horizontal on desktop, vertical on mobile */}
-      <div className="tracking-arrow-h">→</div>
-      <div className="tracking-arrow-v">↓</div>
+      <div className="tracking-arrow-h"><ArrowRight size={18} /></div>
+      <div className="tracking-arrow-v"><ArrowDown size={18} /></div>
 
       {/* Right — customer tracking view */}
       <div style={{ flex: 1, minWidth: 0 }}>

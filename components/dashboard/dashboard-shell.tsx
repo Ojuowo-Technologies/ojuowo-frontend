@@ -23,7 +23,8 @@ import {
   X,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { LogoMark } from "@/components/ui/logo"
+import { LogoMark, Logo } from "@/components/ui/logo"
+import { WelcomeModal } from "@/components/dashboard/welcome-modal"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { ExpandButton } from "@/components/ui/expand-button"
 import { cn } from "@/lib/utils"
@@ -120,13 +121,13 @@ function SidebarNav({
   const router = useRouter()
 
   return (
-    <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4">
+    <nav className="flex-1 overflow-y-auto overflow-x-hidden" style={{ padding: '12px 16px 16px' }}>
       {NAV_GROUPS.map((group, gi) => (
-        <div key={gi} className={gi > 0 ? "mt-4" : ""}>
+        <div key={gi} style={{ marginTop: gi > 0 ? 20 : 0 }}>
           {group.label && !collapsed && (
             <p
-              className="px-3 pb-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.08em]"
-              style={{ color: "var(--color-text-muted)" }}
+              className="text-[0.65rem] font-semibold uppercase tracking-[0.08em]"
+              style={{ color: "var(--color-text-muted)", paddingBottom: 6 }}
             >
               {group.label}
             </p>
@@ -143,10 +144,21 @@ function SidebarNav({
                       onClick={() => { router.push(item.href); onNavigate?.() }}
                       className={cn(
                         "flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors mx-auto",
-                        active
-                          ? "bg-[var(--color-accent)] text-white"
-                          : "text-[var(--color-text-secondary)] hover:bg-[var(--color-accent-muted)] hover:text-[var(--color-accent)]"
+                        active ? "bg-[var(--color-accent)]" : ""
                       )}
+                      style={{ color: active ? '#fff' : 'var(--color-text-secondary)' }}
+                      onMouseEnter={e => {
+                        if (active) return
+                        const el = e.currentTarget as HTMLButtonElement
+                        el.style.backgroundColor = 'var(--color-accent-muted)'
+                        el.style.color = 'var(--color-accent)'
+                      }}
+                      onMouseLeave={e => {
+                        if (active) return
+                        const el = e.currentTarget as HTMLButtonElement
+                        el.style.backgroundColor = ''
+                        el.style.color = 'var(--color-text-secondary)'
+                      }}
                       aria-label={item.label}
                     >
                       <Icon size={18} />
@@ -164,11 +176,25 @@ function SidebarNav({
                   href={item.href}
                   onClick={onNavigate}
                   className={cn(
-                    "flex h-10 items-center gap-3 rounded-[10px] px-3 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-[var(--color-accent)] text-white"
-                      : "text-[var(--color-text-secondary)] hover:bg-[var(--color-accent-muted)] hover:text-[var(--color-text-primary)]"
+                    "flex items-center gap-3 rounded-[10px] text-sm font-medium transition-colors",
+                    active ? "bg-[var(--color-accent)]" : ""
                   )}
+                  style={{
+                    height: 44, paddingLeft: 12, paddingRight: 12,
+                    color: active ? '#fff' : 'var(--color-text-secondary)',
+                  }}
+                  onMouseEnter={e => {
+                    if (active) return
+                    const el = e.currentTarget as HTMLAnchorElement
+                    el.style.backgroundColor = 'var(--color-accent-muted)'
+                    el.style.color = 'var(--color-accent)'
+                  }}
+                  onMouseLeave={e => {
+                    if (active) return
+                    const el = e.currentTarget as HTMLAnchorElement
+                    el.style.backgroundColor = ''
+                    el.style.color = 'var(--color-text-secondary)'
+                  }}
                 >
                   <Icon size={18} className="shrink-0" />
                   <span className="truncate">{item.label}</span>
@@ -288,6 +314,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--color-background)" }}>
+      <WelcomeModal />
       {/* ── Desktop sidebar ──────────────────────────────── */}
       <motion.aside
         animate={{ width: effectiveWidth }}
@@ -298,25 +325,35 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           borderRight: "1px solid #EBEBEB",
         }}
       >
-        {/* Logo */}
+        {/* Logo + collapse toggle */}
         <div
-          className={cn(
-            "flex items-center gap-2.5 shrink-0 py-5",
-            collapsed ? "justify-center px-0" : "px-4"
-          )}
+          style={{
+            display: 'flex', alignItems: 'center', flexShrink: 0,
+            height: 68,
+            padding: collapsed ? '0 12px' : '0 12px 0 16px',
+            justifyContent: collapsed ? 'center' : 'space-between',
+            borderBottom: '1px solid #EBEBEB',
+          }}
         >
-          <LogoMark size={28} />
-          {!collapsed && (
-            <span
-              className="text-base font-semibold truncate"
-              style={{
-                fontFamily: "var(--font-display)",
-                color: "var(--color-text-primary)",
-              }}
-            >
-              Ojúòwò
-            </span>
-          )}
+          {collapsed
+            ? <LogoMark size={30} />
+            : <Logo className="h-10 w-auto" />
+          }
+          <button
+            onClick={toggleCollapsed}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 32, height: 32, borderRadius: 8, border: '1px solid #EBEBEB',
+              backgroundColor: 'transparent', cursor: 'pointer', flexShrink: 0,
+              color: 'var(--color-text-muted)', transition: 'background-color 0.15s, color 0.15s',
+              marginLeft: collapsed ? 0 : 8,
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-accent-muted)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-accent)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text-muted)' }}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
+          </button>
         </div>
 
         {/* Nav */}
@@ -324,26 +361,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
         {/* User */}
         <div
-          className="shrink-0 px-2 py-3"
-          style={{ borderTop: "1px solid #EBEBEB" }}
+          style={{ flexShrink: 0, padding: '16px', borderTop: "1px solid #EBEBEB" }}
         >
           <SidebarUser collapsed={collapsed} />
         </div>
-
-        {/* Collapse toggle tab */}
-        <button
-          onClick={toggleCollapsed}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 flex h-6 w-6 items-center justify-center rounded-full transition-colors"
-          style={{
-            backgroundColor: "var(--color-surface)",
-            border: "1px solid #EBEBEB",
-            color: "var(--color-text-muted)",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-          }}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <PanelLeftOpen size={12} /> : <PanelLeftClose size={12} />}
-        </button>
       </motion.aside>
 
       {/* ── Mobile overlay ───────────────────────────────── */}
@@ -377,19 +398,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             }}
           >
             {/* Logo + close */}
-            <div className="flex items-center justify-between px-4 py-5 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <LogoMark size={28} />
-                <span
-                  className="text-base font-semibold"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    color: "var(--color-text-primary)",
-                  }}
-                >
-                  Ojúòwò
-                </span>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', flexShrink: 0 }}>
+              <Logo className="h-9 w-auto" />
               <button
                 onClick={() => setMobileOpen(false)}
                 className="transition-colors"
@@ -405,8 +415,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
             {/* User */}
             <div
-              className="shrink-0 px-2 py-3"
-              style={{ borderTop: "1px solid #EBEBEB" }}
+              style={{ flexShrink: 0, padding: '16px', borderTop: "1px solid #EBEBEB" }}
             >
               <SidebarUser collapsed={false} />
             </div>
@@ -468,18 +477,18 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 width: 38,
                 height: 38,
                 borderRadius: "50%",
-                border: "1px solid transparent",
+                border: "none",
                 background: "transparent",
                 color: "#666",
                 cursor: "pointer",
-                transition: "border-color 0.15s, color 0.15s",
+                transition: "background 0.15s, color 0.15s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#5B4CF5"
-                e.currentTarget.style.color = "#5B4CF5"
+                e.currentTarget.style.background = "var(--color-accent-muted)"
+                e.currentTarget.style.color = "var(--color-accent)"
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "transparent"
+                e.currentTarget.style.background = "transparent"
                 e.currentTarget.style.color = "#666"
               }}
               aria-label="Notifications"
@@ -517,6 +526,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 height: 44,
                 paddingLeft: 8,
                 paddingRight: 10,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-accent-muted)"
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = ""
               }}
             />
           </div>

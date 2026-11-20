@@ -34,7 +34,7 @@ export function LogoMark({
   )
 }
 
-export function Logo({ variant = 'default', className = '' }: LogoProps) {
+export function Logo({ variant = 'default', className = '', style }: LogoProps & { style?: React.CSSProperties }) {
   // light SVG = indigo mark + wordmark (for light/white backgrounds)
   // dark SVG  = white mark + wordmark (for dark/indigo backgrounds)
   const src = variant === 'light' ? '/ojuowo-logo-dark.svg' : '/ojuowo-logo-light.svg'
@@ -44,7 +44,7 @@ export function Logo({ variant = 'default', className = '' }: LogoProps) {
     <img
       src={src}
       alt="Ojúòwò"
-      style={{ height: '54px', width: 'auto' }}
+      style={className || style ? style : { height: '54px', width: 'auto' }}
       className={className}
     />
   )
