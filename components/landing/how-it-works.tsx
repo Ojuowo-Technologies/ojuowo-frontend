@@ -188,7 +188,7 @@ function ScreenRecordPayment() {
       </div>
 
       <div style={{ background: '#5B4CF5', borderRadius: '11px', padding: '11px', textAlign: 'center', color: '#fff', fontSize: '0.78rem', fontWeight: 700, marginTop: '2px' }}>
-        Collect Payment
+        Take Payment
       </div>
     </div>
   )
@@ -284,8 +284,8 @@ const STEPS = [
   },
   {
     number: '04',
-    title: 'Get Paid Through The App',
-    body: 'Collect payments directly through Ojúòwò. See who has paid, who owes and how much. Always.',
+    title: 'Get Paid, Your Way',
+    body: 'Process payments through Ojúòwò or record cash and transfers as they arrive. Always know who has paid and what is owed.',
   },
 ]
 
