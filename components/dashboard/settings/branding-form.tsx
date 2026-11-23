@@ -312,6 +312,9 @@ export function BrandingForm() {
           {/* ── Logo section ──────────────────────────────────────── */}
           <div style={card}>
             <div style={sectionLabel}>Business Logo</div>
+            <div style={sectionSub}>
+              Upload a PNG, JPG, SVG or WEBP file. Max 5 MB. Your logo appears on every invoice and your public business page.
+            </div>
 
             {/* Drop zone / preview */}
             {logoUrl ? (
