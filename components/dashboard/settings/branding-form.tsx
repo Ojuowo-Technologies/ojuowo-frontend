@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, type DragEvent, type ChangeEvent } from "react"
-import { Upload, X, Check, AlertTriangle, CheckCircle2, ArrowLeft, Palette } from "lucide-react"
+import { Upload, X, Check, AlertTriangle, CheckCircle2, ArrowLeft, Palette, Trash2, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -69,61 +69,61 @@ function InvoicePreview({ logoUrl, color }: { logoUrl: string | null; color: str
       boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
     }}>
       {/* Invoice header */}
-      <div style={{ background: color, padding: "16px 20px", display: "flex", alignItems: "center", gap: 12 }}>
+      <div style={{ background: color, padding: "22px 28px", display: "flex", alignItems: "center", gap: 16 }}>
         {logoUrl ? (
           <img
             src={logoUrl}
             alt="Business logo"
-            style={{ width: 36, height: 36, borderRadius: 6, objectFit: "contain", background: "rgba(255,255,255,0.15)", flexShrink: 0 }}
+            style={{ width: 52, height: 52, borderRadius: 8, objectFit: "contain", background: "rgba(255,255,255,0.15)", flexShrink: 0 }}
           />
         ) : (
-          <div style={{ width: 36, height: 36, borderRadius: 6, background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#fff", flexShrink: 0, letterSpacing: "0.02em" }}>
+          <div style={{ width: 52, height: 52, borderRadius: 8, background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#fff", flexShrink: 0, letterSpacing: "0.02em" }}>
             SIG
           </div>
         )}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1.2 }}>S.I.G Clothing</div>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.65)", marginTop: 2 }}>Invoice</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", lineHeight: 1.2 }}>S.I.G Clothing</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", marginTop: 3 }}>Invoice</div>
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>INV-0024</div>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>Nov 23, 2026</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", fontWeight: 700 }}>INV-0024</div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 3 }}>Nov 23, 2026</div>
         </div>
       </div>
 
       {/* Body */}
-      <div style={{ padding: "14px 20px" }}>
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>Billed to</div>
-          <div style={{ fontSize: 11, color: "#444" }}>Adunola Adeyemi</div>
-          <div style={{ fontSize: 10.5, color: "#777" }}>+234 801 234 5678</div>
+      <div style={{ padding: "20px 28px" }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#111", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>Billed to</div>
+          <div style={{ fontSize: 13, color: "#333", fontWeight: 500 }}>Adunola Adeyemi</div>
+          <div style={{ fontSize: 12, color: "#777", marginTop: 2 }}>+234 801 234 5678</div>
         </div>
 
-        <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 10 }}>
+        <div style={{ borderTop: "1px solid #F3F4F6", paddingTop: 14 }}>
           {[["Ankara Suit, Top + Trouser", "₦35,000"], ["Express delivery fee", "₦2,500"]].map(([label, amount], i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#333", marginBottom: 5, gap: 8 }}>
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#333", marginBottom: 8, gap: 12 }}>
               <span style={{ flex: 1, minWidth: 0 }}>{label}</span>
               <span style={{ fontWeight: 600, flexShrink: 0 }}>{amount}</span>
             </div>
           ))}
         </div>
 
-        <div style={{ borderTop: "1px solid #F3F4F6", marginTop: 8, paddingTop: 8, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: "#111" }}>Total</span>
-          <span style={{ fontSize: 15, fontWeight: 800, color: color }}>₦37,500</span>
+        <div style={{ borderTop: "1px solid #F3F4F6", marginTop: 10, paddingTop: 12, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#111" }}>Total</span>
+          <span style={{ fontSize: 20, fontWeight: 800, color: color }}>₦37,500</span>
         </div>
 
-        <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 10, color: "#777" }}>Paid: ₦15,000</span>
-          <span style={{ background: "#FEF3C7", color: "#92400E", padding: "2px 8px", borderRadius: 999, fontSize: 10, fontWeight: 600 }}>
+        <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontSize: 12, color: "#777" }}>Paid: ₦15,000</span>
+          <span style={{ background: "#FEF3C7", color: "#92400E", padding: "3px 10px", borderRadius: 999, fontSize: 11, fontWeight: 600 }}>
             Balance ₦22,500
           </span>
         </div>
       </div>
 
-      <div style={{ padding: "10px 20px", background: "#F9FAFB", borderTop: "1px solid #F3F4F6" }}>
-        <div style={{ fontSize: 9.5, color: "#777" }}>Pay to: Access Bank · 0123456789 · S.I.G Clothing</div>
-        <div style={{ fontSize: 9, color: "#BBB", marginTop: 3 }}>Powered by Ojúòwò</div>
+      <div style={{ padding: "14px 28px", background: "#F9FAFB", borderTop: "1px solid #F3F4F6" }}>
+        <div style={{ fontSize: 11, color: "#777" }}>Pay to: Access Bank · 0123456789 · S.I.G Clothing</div>
+        <div style={{ fontSize: 10, color: "#BBB", marginTop: 4 }}>Powered by Ojúòwò</div>
       </div>
     </div>
   )
@@ -294,7 +294,7 @@ export function BrandingForm() {
       </Link>
 
       {/* Two-column layout */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 32, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 40, alignItems: "start" }}>
 
         {/* ── Left: form ────────────────────────────────────────────── */}
         <div>
@@ -332,14 +332,16 @@ export function BrandingForm() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, flexShrink: 0 }}>
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.8rem", fontWeight: 600, color: "var(--color-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--font-jakarta)", fontSize: "0.8rem", fontWeight: 600, color: "var(--color-accent)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                   >
+                    <RefreshCw size={13} />
                     Replace
                   </button>
                   <button
                     onClick={removeLogo}
-                    style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.8rem", fontWeight: 500, color: "#999", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "var(--font-jakarta)", fontSize: "0.8rem", fontWeight: 600, color: "var(--color-error)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                   >
+                    <Trash2 size={13} />
                     Remove
                   </button>
                 </div>
@@ -529,54 +531,43 @@ export function BrandingForm() {
           </div>
 
           {/* ── Save bar ───────────────────────────────────────────── */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "20px 28px", background: "#fff", border: "1px solid #EBEBEB", borderRadius: 16 }}>
-            <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.825rem", color: "#777", lineHeight: 1.5 }}>
-              {saveState === "saved"
-                ? "Branding saved. Changes appear on all invoices and your public page."
-                : isExisting
-                  ? "Update your logo or color and save."
-                  : "Your logo and color will appear on every invoice you send."}
-            </div>
-
-            <div style={{ display: "flex", gap: 10, flexShrink: 0 }}>
-              {saveState === "saved" && (
-                <Link
-                  href="/dashboard/setup"
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: 6,
-                    height: 44, padding: "0 20px", borderRadius: 10,
-                    fontFamily: "var(--font-jakarta)", fontSize: "0.875rem", fontWeight: 600,
-                    color: "var(--color-accent)", background: "var(--color-accent-muted)",
-                    border: "none", textDecoration: "none", transition: "background 0.15s",
-                  }}
-                >
-                  Back to Get Started
-                </Link>
-              )}
-
-              <button
-                onClick={handleSave}
-                disabled={saveState === "saved"}
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 10 }}>
+            {saveState === "saved" && (
+              <Link
+                href="/dashboard/setup"
                 style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  height: 44, padding: "0 24px", borderRadius: 10,
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  height: 44, padding: "0 20px", borderRadius: 10,
                   fontFamily: "var(--font-jakarta)", fontSize: "0.875rem", fontWeight: 600,
-                  color: "#fff",
-                  background: saveState === "saved" ? "#16a34a" : "var(--color-accent)",
-                  border: "none", cursor: saveState === "saved" ? "default" : "pointer",
-                  transition: "background 0.2s",
-                  opacity: 1,
+                  color: "var(--color-accent)", background: "var(--color-accent-muted)",
+                  border: "none", textDecoration: "none", transition: "background 0.15s",
                 }}
               >
-                {saveState === "saved" ? (
-                  <><CheckCircle2 size={16} /> Saved</>
-                ) : isExisting ? (
-                  "Save Changes"
-                ) : (
-                  "Save"
-                )}
-              </button>
-            </div>
+                Back to Get Started
+              </Link>
+            )}
+
+            <button
+              onClick={handleSave}
+              disabled={saveState === "saved"}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                height: 44, padding: "0 28px", borderRadius: 10,
+                fontFamily: "var(--font-jakarta)", fontSize: "0.875rem", fontWeight: 600,
+                color: "#fff",
+                background: saveState === "saved" ? "#16a34a" : "var(--color-accent)",
+                border: "none", cursor: saveState === "saved" ? "default" : "pointer",
+                transition: "background 0.2s",
+              }}
+            >
+              {saveState === "saved" ? (
+                <><CheckCircle2 size={16} /> Saved</>
+              ) : isExisting ? (
+                "Save Changes"
+              ) : (
+                "Save"
+              )}
+            </button>
           </div>
 
           {saveState === "error" && (
@@ -592,9 +583,6 @@ export function BrandingForm() {
             Invoice Preview
           </div>
           <InvoicePreview logoUrl={logoUrl} color={brandColor} />
-          <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.75rem", color: "#BBB", marginTop: 10, lineHeight: 1.5, textAlign: "center" }}>
-            Updates live as you make changes.
-          </div>
         </div>
       </div>
     </div>
