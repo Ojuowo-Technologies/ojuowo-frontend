@@ -8,43 +8,77 @@ import Link from "next/link"
 const BANK_KEY = "oj_bank"
 const ONBOARDING_KEY = "oj_onboarding"
 
-// ── Nigerian banks (CBN list) ─────────────────────────────────────────
-const BANKS = [
-  "Access Bank",
-  "Citibank Nigeria",
-  "Ecobank Nigeria",
-  "Fidelity Bank",
-  "First Bank of Nigeria",
-  "First City Monument Bank (FCMB)",
-  "Globus Bank",
-  "Guaranty Trust Bank (GTBank)",
-  "Heritage Bank",
-  "Keystone Bank",
-  "Kuda Bank",
-  "Moniepoint MFB",
-  "Opay",
-  "PalmPay",
-  "Parallex Bank",
-  "Polaris Bank",
-  "Providus Bank",
-  "Stanbic IBTC Bank",
-  "Standard Chartered Bank",
-  "Sterling Bank",
-  "SunTrust Bank",
-  "Titan Trust Bank",
-  "Union Bank of Nigeria",
-  "United Bank for Africa (UBA)",
-  "Unity Bank",
-  "VFD Microfinance Bank",
-  "Wema Bank",
-  "Zenith Bank",
+// ── Bank data ─────────────────────────────────────────────────────────
+type Bank = {
+  name: string   // display name
+  slug: string   // nigerianbanks.xyz logo slug
+  abbr: string   // fallback initials
+  color: string  // fallback brand color
+}
+
+const BANKS: Bank[] = [
+  { name: "Access Bank",                       slug: "access-bank",                      abbr: "ACC",  color: "#E31E24" },
+  { name: "Citibank Nigeria",                  slug: "citibank-nigeria",                  abbr: "CITI", color: "#003B70" },
+  { name: "Ecobank Nigeria",                   slug: "ecobank-nigeria",                   abbr: "ECO",  color: "#003087" },
+  { name: "Fidelity Bank",                     slug: "fidelity-bank",                     abbr: "FID",  color: "#118A2C" },
+  { name: "First Bank of Nigeria",             slug: "first-bank-of-nigeria",             abbr: "FBN",  color: "#002D5B" },
+  { name: "First City Monument Bank (FCMB)",   slug: "first-city-monument-bank",          abbr: "FCMB", color: "#E8450C" },
+  { name: "Globus Bank",                       slug: "globus-bank",                       abbr: "GLO",  color: "#0066CC" },
+  { name: "Guaranty Trust Bank (GTBank)",      slug: "guaranty-trust-bank",               abbr: "GTB",  color: "#F97316" },
+  { name: "Jaiz Bank",                         slug: "jaiz-bank",                         abbr: "JAIZ", color: "#009A44" },
+  { name: "Keystone Bank",                     slug: "keystone-bank",                     abbr: "KEY",  color: "#003366" },
+  { name: "Kuda Bank",                         slug: "kuda-bank",                         abbr: "KUD",  color: "#60269E" },
+  { name: "Lotus Bank",                        slug: "lotus-bank",                        abbr: "LTB",  color: "#00703C" },
+  { name: "Moniepoint MFB",                    slug: "moniepoint-microfinance-bank",      abbr: "MON",  color: "#0C4B3A" },
+  { name: "Opay",                              slug: "opay",                              abbr: "OPY",  color: "#2CBD48" },
+  { name: "PalmPay",                           slug: "palmpay",                           abbr: "PPY",  color: "#01C854" },
+  { name: "Parallex Bank",                     slug: "parallex-bank",                     abbr: "PAR",  color: "#1A237E" },
+  { name: "Polaris Bank",                      slug: "polaris-bank",                      abbr: "POL",  color: "#E8001F" },
+  { name: "Premium Trust Bank",                slug: "premium-trust-bank",                abbr: "PTB",  color: "#1A1A2E" },
+  { name: "Providus Bank",                     slug: "providus-bank",                     abbr: "PRV",  color: "#8B0000" },
+  { name: "Rubies Bank",                       slug: "rubies-microfinance-bank",          abbr: "RUB",  color: "#CC0000" },
+  { name: "Stanbic IBTC Bank",                 slug: "stanbic-ibtc-bank",                 abbr: "STB",  color: "#009EE0" },
+  { name: "Standard Chartered Bank",           slug: "standard-chartered-bank",           abbr: "SCB",  color: "#0D9488" },
+  { name: "Sterling Bank",                     slug: "sterling-bank",                     abbr: "STR",  color: "#CE0033" },
+  { name: "SunTrust Bank",                     slug: "suntrust-bank",                     abbr: "SUN",  color: "#F4A100" },
+  { name: "TAJBank",                           slug: "tajbank",                           abbr: "TAJ",  color: "#006633" },
+  { name: "Titan Trust Bank",                  slug: "titan-trust-bank",                  abbr: "TTB",  color: "#003366" },
+  { name: "Union Bank of Nigeria",             slug: "union-bank-of-nigeria",             abbr: "UBN",  color: "#231F20" },
+  { name: "United Bank for Africa (UBA)",      slug: "united-bank-for-africa",            abbr: "UBA",  color: "#E31E24" },
+  { name: "Unity Bank",                        slug: "unity-bank",                        abbr: "UTY",  color: "#008000" },
+  { name: "VFD Microfinance Bank",             slug: "vfd-microfinance-bank",             abbr: "VFD",  color: "#1D1D1B" },
+  { name: "Wema Bank",                         slug: "wema-bank",                         abbr: "WEM",  color: "#863991" },
+  { name: "Zenith Bank",                       slug: "zenith-bank",                       abbr: "ZEN",  color: "#EC1C23" },
 ]
 
-type BankData = {
-  bankName: string
-  accountNumber: string
-  accountName: string
+// ── Bank logo with initials fallback ──────────────────────────────────
+function BankLogo({ bank, size = 28 }: { bank: Bank; size?: number }) {
+  const [imgError, setImgError] = useState(false)
+  const radius = Math.round(size * 0.25)
+  const fontSize = Math.round(size * 0.32)
+
+  return imgError ? (
+    <div style={{
+      width: size, height: size, borderRadius: radius, flexShrink: 0,
+      background: bank.color, display: "flex", alignItems: "center",
+      justifyContent: "center", fontSize, fontWeight: 800,
+      color: "#fff", fontFamily: "var(--font-jakarta)", letterSpacing: "0.01em",
+    }}>
+      {bank.abbr.slice(0, 3)}
+    </div>
+  ) : (
+    <img
+      src={`https://nigerianbanks.xyz/logo/${bank.slug}.png`}
+      alt={bank.name}
+      width={size}
+      height={size}
+      onError={() => setImgError(true)}
+      style={{ width: size, height: size, borderRadius: radius, objectFit: "contain", flexShrink: 0 }}
+    />
+  )
 }
+
+type SavedBank = { bankName: string; accountNumber: string; accountName: string }
 
 // ── Fake NUBAN lookup (replace with real API call when backend is ready) ──
 function simulateLookup(accountNumber: string, bankName: string): Promise<string | null> {
@@ -62,7 +96,7 @@ function simulateLookup(accountNumber: string, bankName: string): Promise<string
 }
 
 export function BankForm() {
-  const [bankName, setBankName] = useState("")
+  const [selectedBank, setSelectedBank] = useState<Bank | null>(null)
   const [bankSearch, setBankSearch] = useState("")
   const [bankDropdownOpen, setBankDropdownOpen] = useState(false)
   const [accountNumber, setAccountNumber] = useState("")
@@ -78,8 +112,11 @@ export function BankForm() {
     try {
       const raw = localStorage.getItem(BANK_KEY)
       if (!raw) return
-      const saved = JSON.parse(raw) as BankData
-      if (saved.bankName) setBankName(saved.bankName)
+      const saved = JSON.parse(raw) as SavedBank
+      if (saved.bankName) {
+        const match = BANKS.find((b) => b.name === saved.bankName)
+        if (match) setSelectedBank(match)
+      }
       if (saved.accountNumber) setAccountNumber(saved.accountNumber)
       if (saved.accountName) {
         setAccountName(saved.accountName)
@@ -92,11 +129,11 @@ export function BankForm() {
 
   // ── NUBAN lookup — fires when account number reaches 10 digits ────────
   useEffect(() => {
-    if (accountNumber.length !== 10 || !bankName) return
+    if (accountNumber.length !== 10 || !selectedBank) return
     setLookupState("loading")
     setAccountName("")
     setConfirmed(false)
-    simulateLookup(accountNumber, bankName).then((name) => {
+    simulateLookup(accountNumber, selectedBank.name).then((name) => {
       if (name) {
         setAccountName(name)
         setLookupState("success")
@@ -104,7 +141,7 @@ export function BankForm() {
         setLookupState("failed")
       }
     })
-  }, [accountNumber, bankName])
+  }, [accountNumber, selectedBank])
 
   // ── Handlers ──────────────────────────────────────────────────────────
   function handleAccountNumberChange(e: ChangeEvent<HTMLInputElement>) {
@@ -123,8 +160,8 @@ export function BankForm() {
     }
   }
 
-  function selectBank(name: string) {
-    setBankName(name)
+  function selectBank(bank: Bank) {
+    setSelectedBank(bank)
     setBankSearch("")
     setBankDropdownOpen(false)
     setAccountName("")
@@ -134,9 +171,9 @@ export function BankForm() {
   }
 
   function handleSave() {
-    if (!bankName || accountNumber.length !== 10 || !confirmed) return
+    if (!selectedBank || accountNumber.length !== 10 || !confirmed) return
     try {
-      localStorage.setItem(BANK_KEY, JSON.stringify({ bankName, accountNumber, accountName }))
+      localStorage.setItem(BANK_KEY, JSON.stringify({ bankName: selectedBank.name, accountNumber, accountName }))
       const existing = JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? "{}") as Record<string, boolean>
       localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, bank: true }))
       setSaveState("saved")
@@ -145,8 +182,8 @@ export function BankForm() {
     }
   }
 
-  const canSave = bankName && accountNumber.length === 10 && confirmed
-  const filteredBanks = BANKS.filter((b) => b.toLowerCase().includes(bankSearch.toLowerCase()))
+  const canSave = selectedBank && accountNumber.length === 10 && confirmed
+  const filteredBanks = BANKS.filter((b) => b.name.toLowerCase().includes(bankSearch.toLowerCase()))
 
   // ── Shared styles ─────────────────────────────────────────────────────
   const card: React.CSSProperties = {
@@ -217,10 +254,17 @@ export function BankForm() {
               ...inputStyle(false),
               display: "flex", alignItems: "center", justifyContent: "space-between",
               cursor: "pointer", userSelect: "none",
-              color: bankName ? "#111" : "#AAA",
+              color: selectedBank ? "#111" : "#AAA",
             }}
           >
-            <span>{bankName || "Select your bank"}</span>
+            {selectedBank ? (
+              <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <BankLogo bank={selectedBank} size={22} />
+                {selectedBank.name}
+              </span>
+            ) : (
+              <span>Select your bank</span>
+            )}
             <Building2 size={16} style={{ color: "#AAA", flexShrink: 0 }} />
           </div>
 
@@ -247,24 +291,29 @@ export function BankForm() {
               </div>
               <div style={{ maxHeight: 220, overflowY: "auto" }}>
                 {filteredBanks.length > 0 ? (
-                  filteredBanks.map((b) => (
-                    <div
-                      key={b}
-                      onClick={() => selectBank(b)}
-                      style={{
-                        padding: "11px 14px",
-                        fontFamily: "var(--font-jakarta)", fontSize: "0.875rem",
-                        color: b === bankName ? "var(--color-accent)" : "#111",
-                        background: b === bankName ? "var(--color-accent-muted)" : "transparent",
-                        cursor: "pointer",
-                        transition: "background 0.1s",
-                      }}
-                      onMouseEnter={(e) => { if (b !== bankName) (e.currentTarget as HTMLDivElement).style.background = "#F9FAFB" }}
-                      onMouseLeave={(e) => { if (b !== bankName) (e.currentTarget as HTMLDivElement).style.background = "transparent" }}
-                    >
-                      {b}
-                    </div>
-                  ))
+                  filteredBanks.map((b) => {
+                    const isSelected = b.name === selectedBank?.name
+                    return (
+                      <div
+                        key={b.name}
+                        onClick={() => selectBank(b)}
+                        style={{
+                          padding: "10px 14px",
+                          display: "flex", alignItems: "center", gap: 10,
+                          fontFamily: "var(--font-jakarta)", fontSize: "0.875rem",
+                          color: isSelected ? "var(--color-accent)" : "#111",
+                          background: isSelected ? "var(--color-accent-muted)" : "transparent",
+                          cursor: "pointer",
+                          transition: "background 0.1s",
+                        }}
+                        onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLDivElement).style.background = "#F9FAFB" }}
+                        onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLDivElement).style.background = isSelected ? "var(--color-accent-muted)" : "transparent" }}
+                      >
+                        <BankLogo bank={b} size={24} />
+                        {b.name}
+                      </div>
+                    )
+                  })
                 ) : (
                   <div style={{ padding: "14px", fontFamily: "var(--font-jakarta)", fontSize: "0.825rem", color: "#AAA", textAlign: "center" }}>
                     No banks match. Contact support if yours is missing.
@@ -370,7 +419,7 @@ export function BankForm() {
                 Account name lookup failed
               </div>
               <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.775rem", color: "#92400E", marginTop: 2, lineHeight: 1.5 }}>
-                We could not confirm this account number with {bankName}. Check the number and try again, or enter your account name manually below.
+                We could not confirm this account number with {selectedBank?.name ?? "your bank"}. Check the number and try again, or enter your account name manually below.
               </div>
               <input
                 type="text"
