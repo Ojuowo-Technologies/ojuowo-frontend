@@ -311,7 +311,7 @@ export function MyPageForm() {
       }
       localStorage.setItem(MY_PAGE_KEY, JSON.stringify(toSave))
       const existing = JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? "{}") as Record<string, boolean>
-      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, myPage: true }))
+      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, "my-page": true }))
       setSaveState("saved")
     } catch {
       setSaveState("error")

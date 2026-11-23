@@ -92,7 +92,7 @@ export function PaymentPlanForm() {
     try {
       localStorage.setItem(PAYMENT_PLAN_KEY, JSON.stringify({ planType, depositPct: pct, note: note.trim() }))
       const existing = JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? "{}") as Record<string, boolean>
-      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, payments: true }))
+      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, "payment-plan": true }))
       setSaveState("saved")
     } catch {
       setSaveState("error")

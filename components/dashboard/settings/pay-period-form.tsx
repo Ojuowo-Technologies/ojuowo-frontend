@@ -103,7 +103,7 @@ export function PayPeriodForm() {
     try {
       localStorage.setItem(PAY_PERIOD_KEY, JSON.stringify({ cycle, startDay }))
       const existing = JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? "{}") as Record<string, boolean>
-      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, payPeriod: true }))
+      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, "pay-period": true }))
       setSaveState("saved")
     } catch {
       setSaveState("error")

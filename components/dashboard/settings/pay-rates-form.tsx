@@ -158,7 +158,7 @@ export function PayRatesForm() {
       }))
       localStorage.setItem(PAY_RATES_KEY, JSON.stringify(toSave))
       const existing = JSON.parse(localStorage.getItem(ONBOARDING_KEY) ?? "{}") as Record<string, boolean>
-      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, payRates: true }))
+      localStorage.setItem(ONBOARDING_KEY, JSON.stringify({ ...existing, "pay-rates": true }))
       setSaveState("saved")
     } catch {
       setSaveState("error")
