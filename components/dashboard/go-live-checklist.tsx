@@ -84,41 +84,41 @@ const STEP_ILLUSTRATIONS: Record<string, React.ReactElement> = {
   bank: (
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="80" height="80" rx="16" fill="#F0EDFF"/>
-      <path d="M40 11L70 36H10L40 11Z" fill="#F59E0B"/>
-      <rect x="12" y="36" width="56" height="5" fill="#D97706"/>
-      <rect x="12" y="41" width="56" height="23" fill="#FEF3C7"/>
+      <path d="M40 11L70 36H10L40 11Z" fill="#5B4CF5"/>
+      <rect x="12" y="36" width="56" height="5" fill="#3730A3"/>
+      <rect x="12" y="41" width="56" height="23" fill="#EDE9FF"/>
       <rect x="19" y="43" width="8" height="19" rx="2" fill="white"/>
       <rect x="36" y="43" width="8" height="19" rx="2" fill="white"/>
       <rect x="53" y="43" width="8" height="19" rx="2" fill="white"/>
-      <rect x="32" y="53" width="16" height="11" rx="3" fill="#5B4CF5"/>
-      <rect x="8" y="64" width="64" height="5" rx="2" fill="#EDE9FF"/>
+      <rect x="32" y="53" width="16" height="11" rx="3" fill="#3730A3"/>
+      <rect x="8" y="64" width="64" height="5" rx="2" fill="#C4B5FD"/>
     </svg>
   ),
   "pay-period": (
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="80" height="80" rx="16" fill="#F0EDFF"/>
       <rect x="10" y="20" width="60" height="52" rx="8" fill="white"/>
-      <rect x="10" y="20" width="60" height="20" rx="8" fill="#F59E0B"/>
-      <rect x="10" y="32" width="60" height="8" fill="#F59E0B"/>
-      <circle cx="24" cy="20" r="5" fill="white"/>
-      <circle cx="56" cy="20" r="5" fill="white"/>
-      <rect x="15" y="44" width="10" height="8" rx="2" fill="#FEF3C7"/>
-      <rect x="29" y="44" width="10" height="8" rx="2" fill="#FEF3C7"/>
-      <rect x="43" y="44" width="10" height="8" rx="2" fill="#5B4CF5"/>
-      <rect x="57" y="44" width="10" height="8" rx="2" fill="#FEF3C7"/>
-      <rect x="15" y="56" width="10" height="8" rx="2" fill="#FEF3C7"/>
-      <rect x="29" y="56" width="10" height="8" rx="2" fill="#FEF3C7"/>
-      <rect x="43" y="56" width="10" height="8" rx="2" fill="#FEF3C7"/>
-      <rect x="57" y="56" width="10" height="8" rx="2" fill="#FEF3C7"/>
+      <rect x="10" y="20" width="60" height="20" rx="8" fill="#5B4CF5"/>
+      <rect x="10" y="32" width="60" height="8" fill="#5B4CF5"/>
+      <circle cx="24" cy="20" r="5" fill="#C4B5FD"/>
+      <circle cx="56" cy="20" r="5" fill="#C4B5FD"/>
+      <rect x="15" y="44" width="10" height="8" rx="2" fill="#EDE9FF"/>
+      <rect x="29" y="44" width="10" height="8" rx="2" fill="#EDE9FF"/>
+      <rect x="43" y="44" width="10" height="8" rx="2" fill="#3730A3"/>
+      <rect x="57" y="44" width="10" height="8" rx="2" fill="#EDE9FF"/>
+      <rect x="15" y="56" width="10" height="8" rx="2" fill="#EDE9FF"/>
+      <rect x="29" y="56" width="10" height="8" rx="2" fill="#C4B5FD"/>
+      <rect x="43" y="56" width="10" height="8" rx="2" fill="#EDE9FF"/>
+      <rect x="57" y="56" width="10" height="8" rx="2" fill="#EDE9FF"/>
     </svg>
   ),
   staff: (
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="80" height="80" rx="16" fill="#F0EDFF"/>
-      <circle cx="30" cy="29" r="12" fill="#FDE68A"/>
-      <path d="M12 66c0-11 8-18 18-18s18 7 18 18" fill="#FDE68A"/>
-      <circle cx="48" cy="29" r="12" fill="#F59E0B"/>
-      <path d="M30 66c0-11 8-18 18-18s18 7 18 18" fill="#F59E0B"/>
+      <circle cx="30" cy="29" r="12" fill="#C4B5FD"/>
+      <path d="M12 66c0-11 8-18 18-18s18 7 18 18" fill="#C4B5FD"/>
+      <circle cx="48" cy="29" r="12" fill="#8B7EF8"/>
+      <path d="M30 66c0-11 8-18 18-18s18 7 18 18" fill="#8B7EF8"/>
       <circle cx="63" cy="17" r="10" fill="#5B4CF5"/>
       <rect x="58" y="15.75" width="10" height="2.5" rx="1.25" fill="white"/>
       <rect x="61.75" y="12" width="2.5" height="10" rx="1.25" fill="white"/>
@@ -127,12 +127,12 @@ const STEP_ILLUSTRATIONS: Record<string, React.ReactElement> = {
   "pay-rates": (
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="80" height="80" rx="16" fill="#F0EDFF"/>
-      <ellipse cx="40" cy="62" rx="24" ry="8" fill="#FCD34D"/>
-      <ellipse cx="40" cy="58" rx="24" ry="8" fill="#F59E0B"/>
-      <ellipse cx="40" cy="48" rx="24" ry="8" fill="#FCD34D"/>
-      <ellipse cx="40" cy="44" rx="24" ry="8" fill="#FBBF24"/>
-      <ellipse cx="40" cy="34" rx="24" ry="8" fill="#FCD34D"/>
-      <ellipse cx="40" cy="30" rx="24" ry="8" fill="#FDE68A"/>
+      <ellipse cx="40" cy="62" rx="24" ry="8" fill="#C4B5FD"/>
+      <ellipse cx="40" cy="58" rx="24" ry="8" fill="#8B7EF8"/>
+      <ellipse cx="40" cy="48" rx="24" ry="8" fill="#C4B5FD"/>
+      <ellipse cx="40" cy="44" rx="24" ry="8" fill="#8B7EF8"/>
+      <ellipse cx="40" cy="34" rx="24" ry="8" fill="#5B4CF5"/>
+      <ellipse cx="40" cy="30" rx="24" ry="8" fill="#EDE9FF"/>
       <text x="40" y="34" textAnchor="middle" fontSize="11" fontWeight="800" fill="#5B4CF5" fontFamily="sans-serif">₦</text>
     </svg>
   ),
@@ -140,11 +140,11 @@ const STEP_ILLUSTRATIONS: Record<string, React.ReactElement> = {
     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="80" height="80" rx="16" fill="#F0EDFF"/>
       <rect x="22" y="8" width="36" height="54" rx="4" fill="white"/>
-      <rect x="29" y="16" width="22" height="3.5" rx="1.75" fill="#FDE68A"/>
-      <rect x="29" y="24" width="15" height="3" rx="1.5" fill="#FDE68A"/>
-      <rect x="29" y="31" width="20" height="3" rx="1.5" fill="#FDE68A"/>
-      <rect x="29" y="38" width="11" height="3" rx="1.5" fill="#FDE68A"/>
-      <rect x="29" y="45" width="17" height="3" rx="1.5" fill="#FDE68A"/>
+      <rect x="29" y="16" width="22" height="3.5" rx="1.75" fill="#C4B5FD"/>
+      <rect x="29" y="24" width="15" height="3" rx="1.5" fill="#EDE9FF"/>
+      <rect x="29" y="31" width="20" height="3" rx="1.5" fill="#EDE9FF"/>
+      <rect x="29" y="38" width="11" height="3" rx="1.5" fill="#C4B5FD"/>
+      <rect x="29" y="45" width="17" height="3" rx="1.5" fill="#EDE9FF"/>
       <circle cx="58" cy="64" r="12" fill="#5B4CF5"/>
       <path d="M52.5 64l4 5 10-10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
@@ -156,9 +156,9 @@ const STEP_ILLUSTRATIONS: Record<string, React.ReactElement> = {
       <rect x="34" y="11" width="12" height="4" rx="2" fill="#EDE9FF"/>
       <rect x="22" y="20" width="36" height="16" fill="#5B4CF5"/>
       <circle cx="40" cy="28" r="5" fill="white" fillOpacity="0.25"/>
-      <rect x="28" y="40" width="24" height="4" rx="2" fill="#FDE68A"/>
-      <rect x="28" y="48" width="16" height="3" rx="1.5" fill="#FDE68A"/>
-      <rect x="28" y="55" width="20" height="3" rx="1.5" fill="#FDE68A"/>
+      <rect x="28" y="40" width="24" height="4" rx="2" fill="#C4B5FD"/>
+      <rect x="28" y="48" width="16" height="3" rx="1.5" fill="#EDE9FF"/>
+      <rect x="28" y="55" width="20" height="3" rx="1.5" fill="#EDE9FF"/>
       <rect x="31" y="62" width="18" height="6" rx="3" fill="#5B4CF5"/>
     </svg>
   ),

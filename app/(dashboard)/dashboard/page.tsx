@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Dashboard — Ojúòwò",
+  title: "Dashboard · Ojúòwò",
 }
 
 export default function DashboardPage() {

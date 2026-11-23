@@ -20,9 +20,9 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://ojuowo.com'),
-  title: 'Ojúòwò — Orders, Staff Tasks & Worker Pay for Nigerian Small Businesses',
+  title: 'Ojúòwò · Orders, Staff Tasks & Worker Pay for Nigerian Small Businesses',
   description:
-    'Stop running your business from a notebook and WhatsApp. Ojúòwò helps tailors, hair stylists, bakers, shoe makers and more manage orders, track customer jobs, assign staff tasks and calculate worker pay — all in one place. Join the waitlist.',
+    'Stop running your business from a notebook and WhatsApp. Ojúòwò helps tailors, hair stylists, bakers, shoe makers and more manage orders, track customer jobs, assign staff tasks and calculate worker pay, all in one place. Join the waitlist.',
   keywords: [
     'small business management app Nigeria',
     'order management app Nigeria',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Ojúòwò — Orders, Staff Tasks & Worker Pay for Nigerian Small Businesses',
+    title: 'Ojúòwò · Orders, Staff Tasks & Worker Pay for Nigerian Small Businesses',
     description:
       'Manage orders, let customers track their jobs by link, assign staff tasks and calculate worker pay. Built for Nigerian small businesses. Join the waitlist.',
     type: 'website',
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ojúòwò — Orders, Staff Tasks & Worker Pay for Nigerian Small Businesses',
+    title: 'Ojúòwò · Orders, Staff Tasks & Worker Pay for Nigerian Small Businesses',
     description:
       'Manage orders, let customers track their jobs by link, assign staff tasks and calculate worker pay. Built for Nigerian small businesses. Join the waitlist.',
   },
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   themeColor: '#5B4CF5',
   icons: {
     icon: '/favicon.svg',
-    shortcut: '/favicon.ico',
+    apple: '/favicon.svg',
   },
 }
 

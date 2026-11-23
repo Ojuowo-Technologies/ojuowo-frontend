@@ -76,7 +76,7 @@ export default function Image() {
             display: 'flex',
           }}
         >
-          Join the waitlist — ojuowo.com
+          Join the waitlist · ojuowo.com
         </div>
       </div>
     ),

@@ -23,7 +23,7 @@ import {
   X,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { LogoMark, Logo } from "@/components/ui/logo"
+import { Logo } from "@/components/ui/logo"
 import { WelcomeModal } from "@/components/dashboard/welcome-modal"
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
 import { ExpandButton } from "@/components/ui/expand-button"
@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils"
 
 const SIDEBAR_KEY = "oj_sidebar"
 const SIDEBAR_EXPANDED = 240
-const SIDEBAR_COLLAPSED = 64
+const SIDEBAR_COLLAPSED = 72
 
 type NavItem = {
   label: string
@@ -121,9 +121,9 @@ function SidebarNav({
   const router = useRouter()
 
   return (
-    <nav className="flex-1 overflow-y-auto overflow-x-hidden" style={{ padding: '12px 16px 16px' }}>
+    <nav className="flex-1 overflow-y-auto overflow-x-hidden" style={{ padding: collapsed ? '12px 0 16px' : '12px 16px 16px' }}>
       {NAV_GROUPS.map((group, gi) => (
-        <div key={gi} style={{ marginTop: gi > 0 ? 20 : 0 }}>
+        <div key={gi} style={{ marginTop: gi > 0 ? (collapsed ? 4 : 20) : 0 }}>
           {group.label && !collapsed && (
             <p
               className="text-[0.65rem] font-semibold uppercase tracking-[0.08em]"
@@ -132,7 +132,7 @@ function SidebarNav({
               {group.label}
             </p>
           )}
-          <div className="space-y-0.5">
+          <div className={collapsed ? "flex flex-col items-center space-y-0.5" : "space-y-0.5"}>
             {group.items.map((item) => {
               const Icon = item.icon
               const active = isNavItemActive(pathname, item.href)
@@ -330,15 +330,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           style={{
             display: 'flex', alignItems: 'center', flexShrink: 0,
             height: 68,
-            padding: collapsed ? '0 12px' : '0 12px 0 16px',
+            padding: collapsed ? '0' : '0 12px 0 16px',
             justifyContent: collapsed ? 'center' : 'space-between',
             borderBottom: '1px solid #EBEBEB',
           }}
         >
-          {collapsed
-            ? <LogoMark size={30} />
-            : <Logo className="h-10 w-auto" />
-          }
+          {!collapsed && <Logo className="h-10 w-auto" />}
           <button
             onClick={toggleCollapsed}
             style={{
