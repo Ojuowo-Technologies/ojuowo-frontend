@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useRef, useEffect, type DragEvent, type ChangeEvent } from "react"
-import { Upload, X, Check, AlertTriangle, CheckCircle2, ArrowLeft, Palette, Trash2, RefreshCw } from "lucide-react"
+import { Upload, Check, AlertTriangle, CheckCircle2, ArrowLeft, Palette, Trash2, RefreshCw } from "lucide-react"
+import { HexColorPicker } from "react-colorful"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 // ── Storage ───────────────────────────────────────────────────────────
 const BRANDING_KEY = "oj_branding"
@@ -131,7 +131,6 @@ function InvoicePreview({ logoUrl, color }: { logoUrl: string | null; color: str
 
 // ── Main form ─────────────────────────────────────────────────────────
 export function BrandingForm() {
-  const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Form state
@@ -141,9 +140,10 @@ export function BrandingForm() {
   const [isDragging, setIsDragging] = useState(false)
 
   const [brandColor, setBrandColor] = useState<string>("#5B4CF5")
-  const [isCustomActive, setIsCustomActive] = useState(false)
-  const [customHex, setCustomHex] = useState<string>("")
-  const [customHexError, setCustomHexError] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
+  const [hexInput, setHexInput] = useState<string>("#5B4CF5")
+  const [hexInputError, setHexInputError] = useState(false)
+  const pickerRef = useRef<HTMLDivElement>(null)
 
   const [saveState, setSaveState] = useState<"idle" | "saved" | "error">("idle")
   const [isExisting, setIsExisting] = useState(false)
@@ -156,9 +156,8 @@ export function BrandingForm() {
       const saved = JSON.parse(raw) as { logoUrl?: string; brandColor?: string }
       if (saved.logoUrl) { setLogoUrl(saved.logoUrl); setLogoName("Saved logo") }
       if (saved.brandColor) {
-        const isPreset = PRESETS.some((p) => p.hex === saved.brandColor)
         setBrandColor(saved.brandColor)
-        if (!isPreset) { setIsCustomActive(true); setCustomHex(saved.brandColor ?? "") }
+        setHexInput(saved.brandColor)
       }
       setIsExisting(true)
     } catch {}
@@ -209,28 +208,40 @@ export function BrandingForm() {
   // ── Color selection ────────────────────────────────────────────────
   function selectPreset(hex: string) {
     setBrandColor(hex)
-    setIsCustomActive(false)
-    setCustomHexError(false)
+    setHexInput(hex)
+    setPickerOpen(false)
+    setHexInputError(false)
   }
 
-  function handleCustomHexChange(e: ChangeEvent<HTMLInputElement>) {
+  function handlePickerChange(hex: string) {
+    setBrandColor(hex)
+    setHexInput(hex)
+    setHexInputError(false)
+  }
+
+  function handleHexInputChange(e: ChangeEvent<HTMLInputElement>) {
     let val = e.target.value.trim()
     if (val && !val.startsWith("#")) val = "#" + val
-    setCustomHex(val)
-    setCustomHexError(false)
+    setHexInput(val)
+    setHexInputError(false)
     if (isValidHex(val)) setBrandColor(val)
   }
 
-  function handleCustomHexBlur() {
-    if (customHex && !isValidHex(customHex)) {
-      setCustomHexError(true)
-    }
+  function handleHexInputBlur() {
+    if (hexInput && !isValidHex(hexInput)) setHexInputError(true)
   }
 
-  function activateCustom() {
-    setIsCustomActive(true)
-    if (isValidHex(customHex)) setBrandColor(customHex)
-  }
+  // Close picker on outside click
+  useEffect(() => {
+    if (!pickerOpen) return
+    function handleOutside(e: MouseEvent) {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setPickerOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleOutside)
+    return () => document.removeEventListener("mousedown", handleOutside)
+  }, [pickerOpen])
 
   // ── Contrast check ─────────────────────────────────────────────────
   const contrast = contrastWithWhite(brandColor)
@@ -416,10 +427,10 @@ export function BrandingForm() {
               This color appears on your invoice header, the total amount, and your public business page. Choose something that represents your business.
             </div>
 
-            {/* Preset swatches */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 10, marginBottom: 16 }}>
+            {/* Preset swatches + custom picker in one row */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
               {PRESETS.map(({ hex, name }) => {
-                const selected = !isCustomActive && brandColor === hex
+                const selected = !pickerOpen && brandColor === hex
                 return (
                   <button
                     key={hex}
@@ -428,8 +439,7 @@ export function BrandingForm() {
                     aria-label={`${name} (${hex})`}
                     aria-pressed={selected}
                     style={{
-                      width: "100%",
-                      aspectRatio: "1",
+                      width: 40, height: 40, flexShrink: 0,
                       borderRadius: "50%",
                       background: hex,
                       border: selected ? "3px solid #fff" : "2px solid transparent",
@@ -442,76 +452,86 @@ export function BrandingForm() {
                       transform: selected ? "scale(1.1)" : "scale(1)",
                     }}
                   >
-                    {selected && <Check size={12} strokeWidth={3} style={{ color: "#fff" }} />}
+                    {selected && <Check size={13} strokeWidth={3} style={{ color: "#fff" }} />}
                   </button>
                 )
               })}
             </div>
 
-            {/* Custom color row */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "12px 14px",
-                background: isCustomActive ? "var(--color-accent-muted)" : "#FAFAFA",
-                border: `1px solid ${isCustomActive ? "var(--color-border)" : "#EBEBEB"}`,
-                borderRadius: 10,
-                transition: "background 0.15s, border-color 0.15s",
-              }}
-            >
-              {/* Color swatch for custom (shows current custom color or gradient) */}
+            {/* Custom color — wheel trigger + popover */}
+            <div ref={pickerRef} style={{ position: "relative", display: "inline-block" }}>
               <button
-                onClick={activateCustom}
+                onClick={() => setPickerOpen((v) => !v)}
                 title="Custom color"
-                aria-label="Enter a custom color"
-                aria-pressed={isCustomActive}
+                aria-label="Open color picker"
+                aria-expanded={pickerOpen}
                 style={{
-                  width: 32, height: 32, borderRadius: "50%", flexShrink: 0, cursor: "pointer", border: "none",
-                  background: isCustomActive && isValidHex(customHex) ? customHex : "conic-gradient(red, yellow, lime, cyan, blue, magenta, red)",
-                  outline: isCustomActive ? "3px solid var(--color-accent)" : "none",
-                  outlineOffset: 2,
+                  width: 40, height: 40, borderRadius: "50%", cursor: "pointer",
+                  border: pickerOpen ? "3px solid #fff" : "2px solid transparent",
+                  outline: pickerOpen ? `3px solid ${brandColor}` : "none",
+                  background: "conic-gradient(red, yellow, lime, cyan, blue, magenta, red)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  transition: "outline 0.1s",
+                  transition: "outline 0.1s, transform 0.1s",
+                  transform: pickerOpen ? "scale(1.1)" : "scale(1)",
+                  flexShrink: 0,
                 }}
               >
-                {!isCustomActive && <Palette size={13} style={{ color: "#fff", filter: "drop-shadow(0 0 2px rgba(0,0,0,0.5))" }} />}
+                <Palette size={14} style={{ color: "#fff", filter: "drop-shadow(0 0 2px rgba(0,0,0,0.6))" }} />
               </button>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.8rem", fontWeight: 600, color: "#333", marginBottom: 4 }}>
-                  Custom color
-                </div>
-                <input
-                  type="text"
-                  value={customHex}
-                  onChange={handleCustomHexChange}
-                  onBlur={handleCustomHexBlur}
-                  onFocus={activateCustom}
-                  placeholder="#000000"
-                  maxLength={7}
-                  style={{
-                    width: 110,
-                    height: 32,
-                    borderRadius: 7,
-                    border: `1px solid ${customHexError ? "var(--color-error)" : "#DEDEDE"}`,
-                    padding: "0 10px",
-                    fontFamily: "var(--font-jakarta)",
-                    fontSize: "0.825rem",
-                    color: "#111",
-                    outline: "none",
-                    background: "#fff",
-                    letterSpacing: "0.04em",
-                  }}
-                  aria-label="Custom hex color code"
-                />
-                {customHexError && (
-                  <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.75rem", color: "var(--color-error)", marginTop: 4 }}>
-                    Enter a valid hex code, e.g. #3A86FF
+              {pickerOpen && (
+                <div style={{
+                  position: "absolute",
+                  top: "calc(100% + 10px)",
+                  left: 0,
+                  zIndex: 50,
+                  background: "#fff",
+                  border: "1px solid #E5E7EB",
+                  borderRadius: 14,
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
+                  padding: 16,
+                  width: 232,
+                }}>
+                  {/* react-colorful wheel */}
+                  <HexColorPicker
+                    color={brandColor}
+                    onChange={handlePickerChange}
+                    style={{ width: "100%", height: 180 }}
+                  />
+
+                  {/* Hex input + preview swatch */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 6, background: brandColor, flexShrink: 0, border: "1px solid rgba(0,0,0,0.08)" }} />
+                    <input
+                      type="text"
+                      value={hexInput}
+                      onChange={handleHexInputChange}
+                      onBlur={handleHexInputBlur}
+                      placeholder="#000000"
+                      maxLength={7}
+                      style={{
+                        flex: 1,
+                        height: 32,
+                        borderRadius: 7,
+                        border: `1px solid ${hexInputError ? "var(--color-error)" : "#DEDEDE"}`,
+                        padding: "0 10px",
+                        fontFamily: "var(--font-jakarta)",
+                        fontSize: "0.825rem",
+                        color: "#111",
+                        outline: "none",
+                        letterSpacing: "0.04em",
+                        background: "#fff",
+                      }}
+                      aria-label="Hex color code"
+                    />
                   </div>
-                )}
-              </div>
+                  {hexInputError && (
+                    <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.75rem", color: "var(--color-error)", marginTop: 6 }}>
+                      Enter a valid hex code, e.g. #3A86FF
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Contrast warning */}
