@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, type DragEvent, type ChangeEvent } from "react"
-import { Upload, Check, AlertTriangle, CheckCircle2, ArrowLeft, Palette, Trash2, RefreshCw } from "lucide-react"
+import { Upload, Check, AlertTriangle, CheckCircle2, ArrowLeft, Trash2, RefreshCw } from "lucide-react"
 import { HexColorPicker } from "react-colorful"
 import Link from "next/link"
 
@@ -470,14 +470,11 @@ export function BrandingForm() {
                   border: pickerOpen ? "3px solid #fff" : "2px solid transparent",
                   outline: pickerOpen ? `3px solid ${brandColor}` : "none",
                   background: "conic-gradient(red, yellow, lime, cyan, blue, magenta, red)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "outline 0.1s, transform 0.1s",
                   transform: pickerOpen ? "scale(1.1)" : "scale(1)",
                   flexShrink: 0,
                 }}
-              >
-                <Palette size={14} style={{ color: "#fff", filter: "drop-shadow(0 0 2px rgba(0,0,0,0.6))" }} />
-              </button>
+              />
 
               {pickerOpen && (
                 <div style={{
