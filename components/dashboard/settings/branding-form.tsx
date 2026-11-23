@@ -469,7 +469,7 @@ export function BrandingForm() {
                   width: 40, height: 40, borderRadius: "50%", cursor: "pointer",
                   border: pickerOpen ? "3px solid #fff" : "2px solid transparent",
                   outline: pickerOpen ? `3px solid ${brandColor}` : "none",
-                  background: "radial-gradient(circle, #fff 28%, transparent 68%), conic-gradient(hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%))",
+                  background: "radial-gradient(circle, #fff 28%, transparent 65%), conic-gradient(hsl(0,100%,50%), hsl(15,100%,50%), hsl(30,100%,50%), hsl(45,100%,50%), hsl(60,100%,50%), hsl(75,100%,50%), hsl(90,100%,50%), hsl(105,100%,50%), hsl(120,100%,50%), hsl(135,100%,50%), hsl(150,100%,50%), hsl(165,100%,50%), hsl(180,100%,50%), hsl(195,100%,50%), hsl(210,100%,50%), hsl(225,100%,50%), hsl(240,100%,50%), hsl(255,100%,50%), hsl(270,100%,50%), hsl(285,100%,50%), hsl(300,100%,50%), hsl(315,100%,50%), hsl(330,100%,50%), hsl(345,100%,50%), hsl(360,100%,50%))",
                   transition: "outline 0.1s, transform 0.1s",
                   transform: pickerOpen ? "scale(1.1)" : "scale(1)",
                   flexShrink: 0,
