@@ -261,7 +261,12 @@ export default function DashboardPage() {
 
   if (uiState === "setup-incomplete") {
     return (
-      <div className="max-w-5xl mx-auto" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 16px" }}>
+      <div style={{
+        position: "fixed", inset: 0, top: 68,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "24px 16px", overflowY: "auto",
+        backgroundColor: "var(--color-background)",
+      }}>
         <SetupPrompt completedCount={completedCount} total={STEP_IDS.length} />
       </div>
     )
