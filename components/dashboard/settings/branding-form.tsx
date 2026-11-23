@@ -467,10 +467,10 @@ export function BrandingForm() {
                 aria-expanded={pickerOpen}
                 style={{
                   width: 40, height: 40, borderRadius: "50%", cursor: "pointer",
-                  border: "none",
-                  outline: "none",
+                  border: pickerOpen ? "3px solid #fff" : "none",
+                  outline: pickerOpen ? `3px solid ${brandColor}` : "none",
                   background: "conic-gradient(red, yellow, lime, cyan, blue, magenta, red)",
-                  transition: "transform 0.1s",
+                  transition: "outline 0.1s, transform 0.1s",
                   transform: pickerOpen ? "scale(1.08)" : "scale(1)",
                   flexShrink: 0,
                 }}
