@@ -13,14 +13,16 @@ type Role = "worker" | "manager" | "cashier"
 
 type StaffEntry = {
   id: string
-  name: string
+  firstName: string
+  lastName: string
   phone: string
   role: Role | null
-  nameError: string
+  firstNameError: string
+  lastNameError: string
   phoneError: string
 }
 
-type SavedStaff = { id: string; name: string; phone: string; role: Role }
+type SavedStaff = { id: string; firstName: string; lastName: string; phone: string; role: Role }
 
 const ROLES: { value: Role; label: string; desc: string }[] = [
   { value: "worker",   label: "Worker",   desc: "Sees and updates their own tasks only" },
@@ -29,7 +31,7 @@ const ROLES: { value: Role; label: string; desc: string }[] = [
 ]
 
 function makeEntry(): StaffEntry {
-  return { id: crypto.randomUUID(), name: "", phone: "", role: null, nameError: "", phoneError: "" }
+  return { id: crypto.randomUUID(), firstName: "", lastName: "", phone: "", role: null, firstNameError: "", lastNameError: "", phoneError: "" }
 }
 
 // ── Phone normalisation ───────────────────────────────────────────────
@@ -47,9 +49,10 @@ function validatePhone(raw: string): string {
   return ""
 }
 
-function validateName(name: string): string {
-  if (!name.trim()) return ""
-  if (name.trim().length < 2) return "Name must be at least 2 characters."
+function validateNamePart(value: string, label: string): string {
+  if (!value.trim()) return ""
+  if (value.trim().length < 2) return `${label} must be at least 2 characters.`
+  if (!/^[A-Za-zÀ-ÖØ-öø-ÿ'\- ]+$/.test(value.trim())) return `${label} contains invalid characters.`
   return ""
 }
 
@@ -102,7 +105,7 @@ export function StaffInviteForm() {
       if (!raw) return
       const saved = JSON.parse(raw) as SavedStaff[]
       if (!Array.isArray(saved) || saved.length === 0) return
-      setEntries(saved.map((s) => ({ ...s, nameError: "", phoneError: "" })))
+      setEntries(saved.map((s) => ({ ...s, firstNameError: "", lastNameError: "", phoneError: "" })))
       setIsExisting(true)
     } catch {}
   }, [])
@@ -123,8 +126,12 @@ export function StaffInviteForm() {
   }
 
   // ── Blur validators ───────────────────────────────────────────────
-  function handleNameBlur(id: string, name: string) {
-    updateEntry(id, { nameError: validateName(name) })
+  function handleFirstNameBlur(id: string, val: string) {
+    updateEntry(id, { firstNameError: validateNamePart(val, "First name") })
+  }
+
+  function handleLastNameBlur(id: string, val: string) {
+    updateEntry(id, { lastNameError: validateNamePart(val, "Last name") })
   }
 
   function handlePhoneBlur(id: string, phone: string) {
@@ -150,13 +157,14 @@ export function StaffInviteForm() {
     let hasError = false
 
     const validated = entries.map((e) => {
-      const nameErr = e.name.trim() ? validateName(e.name) : "Name is required."
+      const firstNameErr = e.firstName.trim() ? validateNamePart(e.firstName, "First name") : "First name is required."
+      const lastNameErr = e.lastName.trim() ? validateNamePart(e.lastName, "Last name") : "Last name is required."
       const rawPhone = normalisePhone(e.phone)
       let phoneErr = e.phone.trim() ? validatePhone(e.phone) : "Phone number is required."
       if (!phoneErr && dupes.has(rawPhone)) phoneErr = "This number appears more than once."
       const roleErr = e.role === null
-      if (nameErr || phoneErr || roleErr) hasError = true
-      return { ...e, nameError: nameErr, phoneError: phoneErr }
+      if (firstNameErr || lastNameErr || phoneErr || roleErr) hasError = true
+      return { ...e, firstNameError: firstNameErr, lastNameError: lastNameErr, phoneError: phoneErr }
     })
 
     setEntries(validated)
@@ -165,7 +173,8 @@ export function StaffInviteForm() {
     try {
       const toSave: SavedStaff[] = entries.map((e) => ({
         id: e.id,
-        name: e.name.trim(),
+        firstName: e.firstName.trim(),
+        lastName: e.lastName.trim(),
         phone: normalisePhone(e.phone),
         role: e.role as Role,
       }))
@@ -179,7 +188,8 @@ export function StaffInviteForm() {
   }
 
   const canSave = entries.length > 0 && entries.every(
-    (e) => e.name.trim() && e.phone.trim() && e.role !== null && !e.nameError && !e.phoneError
+    (e) => e.firstName.trim() && e.lastName.trim() && e.phone.trim() && e.role !== null &&
+           !e.firstNameError && !e.lastNameError && !e.phoneError
   )
 
   const card: React.CSSProperties = {
@@ -247,33 +257,51 @@ export function StaffInviteForm() {
               )}
             </div>
 
-            {/* Name + Phone row */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+            {/* First + Last name row */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
               <div>
-                <label style={fieldLabel}>Full Name</label>
+                <label style={fieldLabel}>First Name</label>
                 <input
                   type="text"
-                  value={entry.name}
-                  onChange={(e) => updateEntry(entry.id, { name: e.target.value, nameError: "" })}
-                  onBlur={() => handleNameBlur(entry.id, entry.name)}
-                  placeholder="Ada Okafor"
-                  style={inputStyle(!!entry.nameError)}
+                  value={entry.firstName}
+                  onChange={(e) => updateEntry(entry.id, { firstName: e.target.value, firstNameError: "" })}
+                  onBlur={() => handleFirstNameBlur(entry.id, entry.firstName)}
+                  placeholder="Ada"
+                  style={inputStyle(!!entry.firstNameError)}
                 />
-                <ErrorMsg msg={entry.nameError} />
+                <ErrorMsg msg={entry.firstNameError} />
               </div>
               <div>
-                <label style={fieldLabel}>Phone Number</label>
+                <label style={fieldLabel}>Last Name</label>
                 <input
-                  type="tel"
-                  inputMode="numeric"
-                  value={entry.phone}
-                  onChange={(e) => updateEntry(entry.id, { phone: e.target.value, phoneError: "" })}
-                  onBlur={() => handlePhoneBlur(entry.id, entry.phone)}
-                  placeholder="08012345678"
-                  style={inputStyle(!!entry.phoneError || isDupePhone)}
+                  type="text"
+                  value={entry.lastName}
+                  onChange={(e) => updateEntry(entry.id, { lastName: e.target.value, lastNameError: "" })}
+                  onBlur={() => handleLastNameBlur(entry.id, entry.lastName)}
+                  placeholder="Okafor"
+                  style={inputStyle(!!entry.lastNameError)}
                 />
-                <ErrorMsg msg={entry.phoneError || (isDupePhone ? "This number appears more than once." : "")} />
+                <ErrorMsg msg={entry.lastNameError} />
               </div>
+            </div>
+
+            {/* Phone row */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={fieldLabel}>Phone Number</label>
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={entry.phone}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 11)
+                  updateEntry(entry.id, { phone: val, phoneError: "" })
+                }}
+                onBlur={() => handlePhoneBlur(entry.id, entry.phone)}
+                placeholder="08012345678"
+                maxLength={11}
+                style={inputStyle(!!entry.phoneError || isDupePhone)}
+              />
+              <ErrorMsg msg={entry.phoneError || (isDupePhone ? "This number appears more than once." : "")} />
             </div>
 
             {/* Role picker */}
