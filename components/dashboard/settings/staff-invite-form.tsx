@@ -306,61 +306,57 @@ export function StaffInviteForm() {
               <ErrorMsg msg={entry.phoneError || (isDupePhone ? "This number appears more than once." : "")} />
             </div>
 
-            {/* Role picker + Job title row */}
-            <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 20, alignItems: "start" }}>
-              {/* Access level */}
-              <div>
-                <label style={fieldLabel}>Access Level</label>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {ROLES.map((r) => {
-                    const selected = entry.role === r.value
-                    return (
-                      <button
-                        key={r.value}
-                        onClick={() => updateEntry(entry.id, { role: r.value })}
-                        title={r.desc}
-                        style={{
-                          height: 36, padding: "0 14px", borderRadius: 8, cursor: "pointer",
-                          border: selected ? "2px solid var(--color-accent)" : "2px solid #EBEBEB",
-                          background: selected ? "var(--color-accent)" : "#fff",
-                          fontFamily: "var(--font-jakarta)", fontSize: "0.8rem",
-                          fontWeight: selected ? 700 : 500,
-                          color: selected ? "#fff" : "#555",
-                          transition: "all 0.15s",
-                          boxShadow: "none",
-                        }}
-                      >
-                        {r.label}
-                      </button>
-                    )
-                  })}
-                </div>
-                {entry.role && (
-                  <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.75rem", color: "#888", marginTop: 6 }}>
-                    {ROLES.find((r) => r.value === entry.role)?.desc}
-                  </div>
-                )}
-                {!entry.role && saveState !== "idle" && (
-                  <ErrorMsg msg="Select an access level." />
-                )}
+            {/* Access level */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={fieldLabel}>Access Level</label>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {ROLES.map((r) => {
+                  const selected = entry.role === r.value
+                  return (
+                    <button
+                      key={r.value}
+                      onClick={() => updateEntry(entry.id, { role: r.value })}
+                      style={{
+                        height: 40, padding: "0 20px", borderRadius: 10, cursor: "pointer",
+                        border: selected ? "2px solid var(--color-accent)" : "2px solid #EBEBEB",
+                        background: selected ? "var(--color-accent)" : "#fff",
+                        fontFamily: "var(--font-jakarta)", fontSize: "0.875rem",
+                        fontWeight: 700,
+                        color: selected ? "#fff" : "#777",
+                        transition: "all 0.15s",
+                        boxShadow: "none",
+                      }}
+                    >
+                      {r.label}
+                    </button>
+                  )
+                })}
               </div>
-
-              {/* Job title */}
-              <div>
-                <label style={fieldLabel}>
-                  Job Title
-                  <span style={{ fontWeight: 400, color: "#AAA", marginLeft: 5 }}>(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={entry.jobTitle}
-                  onChange={(e) => updateEntry(entry.id, { jobTitle: e.target.value })}
-                  placeholder="e.g. Receptionist, Seamstress, Cutter"
-                  style={inputStyle(false)}
-                />
-                <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.72rem", color: "#AAA", marginTop: 5, lineHeight: 1.4 }}>
-                  Shown on their invite and profile. If blank, their access level name is used.
+              {entry.role && (
+                <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.775rem", color: "#888", marginTop: 7 }}>
+                  {ROLES.find((r) => r.value === entry.role)?.desc}
                 </div>
+              )}
+              {!entry.role && saveState !== "idle" && (
+                <ErrorMsg msg="Select an access level." />
+              )}
+            </div>
+
+            {/* Job title */}
+            <div>
+              <label style={fieldLabel}>
+                Job Title
+                <span style={{ fontWeight: 400, color: "#AAA", marginLeft: 5 }}>(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={entry.jobTitle}
+                onChange={(e) => updateEntry(entry.id, { jobTitle: e.target.value })}
+                placeholder="e.g. Receptionist, Seamstress, Cutter"
+                style={inputStyle(false)}
+              />
+              <div style={{ fontFamily: "var(--font-jakarta)", fontSize: "0.72rem", color: "#AAA", marginTop: 5, lineHeight: 1.4 }}>
+                Shown on their invite and profile. Falls back to their access level name if left blank.
               </div>
             </div>
           </div>
