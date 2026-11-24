@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { cn } from "@/lib/utils";
@@ -17,11 +17,15 @@ const jakarta = Plus_Jakarta_Sans({
   display: 'swap',
 })
 
+export const viewport: Viewport = {
+  themeColor: '#5B4CF5',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://ojuowo.com'),
-  title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
+  title: 'Ojúòwò · Business OS for Nigerian Small Businesses',
   description:
-    'Ojúòwò helps Nigerian tailors, bakers, hair stylists and more manage orders, assign staff tasks and calculate worker pay — all in one place. Join the waitlist.',
+    'Ojúòwò helps Nigerian tailors, bakers, hair stylists and more manage orders, assign staff tasks and calculate worker pay, all in one place. Join the waitlist.',
   keywords: [
     'small business management app Nigeria',
     'order management app Nigeria',
@@ -38,7 +42,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
+    title: 'Ojúòwò · Business OS for Nigerian Small Businesses',
     description:
       'Manage orders, let customers track by link, assign tasks, calculate pay. For Nigerian small businesses. Join the waitlist.',
     type: 'website',
@@ -48,7 +52,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
+    title: 'Ojúòwò · Business OS for Nigerian Small Businesses',
     description:
       'Manage orders, let customers track by link, assign tasks, calculate pay. For Nigerian small businesses. Join the waitlist.',
   },
@@ -56,7 +60,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  themeColor: '#5B4CF5',
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
