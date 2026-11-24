@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://ojuowo.com'),
-  title: 'Ojúòwò · Business OS for Nigerian Small Businesses',
+  title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
   description:
     'Ojúòwò helps Nigerian tailors, bakers, hair stylists and more manage orders, assign staff tasks and calculate worker pay, all in one place. Join the waitlist.',
   keywords: [
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Ojúòwò · Business OS for Nigerian Small Businesses',
+    title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
     description:
       'Manage orders, let customers track by link, assign tasks, calculate pay. For Nigerian small businesses. Join the waitlist.',
     type: 'website',
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ojúòwò · Business OS for Nigerian Small Businesses',
+    title: 'Ojúòwò — Business OS for Nigerian Small Businesses',
     description:
       'Manage orders, let customers track by link, assign tasks, calculate pay. For Nigerian small businesses. Join the waitlist.',
   },

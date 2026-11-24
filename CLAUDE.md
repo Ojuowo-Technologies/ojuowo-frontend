@@ -184,6 +184,15 @@ The permission matrix is in PRD §2.2. When in doubt, **deny** and add a reason.
   and brand colors. The Ojúòwò brand stays in the footer only ("Powered by Ojúòwò").
 - Use shadcn/ui components before writing anything custom.
 - Load the `artifact-design` skill before creating any new artifact or page template.
+- **No em dashes in visible copy.** Never use `—` (em dash) in any UI text, button labels,
+  headings, or body copy in the app or landing pages. Em dashes are allowed only in
+  `<title>` tags and meta description strings (industry standard for browser tabs and
+  search snippets). Use `·` (middle dot) as a separator in page titles
+  (e.g. `Page · Ojúòwò`), or rewrite the sentence to avoid a separator entirely.
+- **No default button shadows.** Buttons must have no box-shadow by default. A very light
+  shadow is allowed on `:hover` or `:focus-visible` only, to signal interactivity — keep it
+  subtle (`0 2px 8px rgba(0,0,0,0.10)` maximum). Never add a shadow to communicate state
+  or decoration; never use a shadow as the only affordance.
 
 ---
 
